@@ -32,9 +32,14 @@ namespace ComputerVision
             this.panelDestination = new System.Windows.Forms.Panel();
             this.buttonLoad = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.buttonGrayscale = new System.Windows.Forms.Button();
+            this.cbGrayscale = new System.Windows.Forms.ComboBox();
+            this.btNegative = new System.Windows.Forms.Button();
+            this.btGrayscale = new System.Windows.Forms.Button();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.tbBrightness = new System.Windows.Forms.TrackBar();
+            this.lbBrightness = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).BeginInit();
             this.SuspendLayout();
             // 
             // panelSource
@@ -70,27 +75,75 @@ namespace ComputerVision
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.buttonGrayscale);
+            this.panel1.Controls.Add(this.cbGrayscale);
+            this.panel1.Controls.Add(this.btNegative);
+            this.panel1.Controls.Add(this.btGrayscale);
             this.panel1.Location = new System.Drawing.Point(348, 271);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(320, 190);
             this.panel1.TabIndex = 3;
             // 
-            // buttonGrayscale
+            // cbGrayscale
             // 
-            this.buttonGrayscale.Location = new System.Drawing.Point(7, 155);
-            this.buttonGrayscale.Name = "buttonGrayscale";
-            this.buttonGrayscale.Size = new System.Drawing.Size(75, 23);
-            this.buttonGrayscale.TabIndex = 13;
-            this.buttonGrayscale.Text = "Grayscale";
-            this.buttonGrayscale.UseVisualStyleBackColor = true;
-            this.buttonGrayscale.Click += new System.EventHandler(this.buttonGrayscale_Click);
+            this.cbGrayscale.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbGrayscale.FormattingEnabled = true;
+            this.cbGrayscale.Items.AddRange(new object[] {
+            "AVG",
+            "Formula"});
+            this.cbGrayscale.Location = new System.Drawing.Point(84, 3);
+            this.cbGrayscale.Name = "cbGrayscale";
+            this.cbGrayscale.Size = new System.Drawing.Size(121, 21);
+            this.cbGrayscale.TabIndex = 14;
+            // 
+            // btNegative
+            // 
+            this.btNegative.Location = new System.Drawing.Point(3, 32);
+            this.btNegative.Name = "btNegative";
+            this.btNegative.Size = new System.Drawing.Size(75, 23);
+            this.btNegative.TabIndex = 13;
+            this.btNegative.Text = "Negative";
+            this.btNegative.UseVisualStyleBackColor = true;
+            this.btNegative.Click += new System.EventHandler(this.btNegative_Click);
+            // 
+            // btGrayscale
+            // 
+            this.btGrayscale.Location = new System.Drawing.Point(3, 3);
+            this.btGrayscale.Name = "btGrayscale";
+            this.btGrayscale.Size = new System.Drawing.Size(75, 23);
+            this.btGrayscale.TabIndex = 13;
+            this.btGrayscale.Text = "Grayscale";
+            this.btGrayscale.UseVisualStyleBackColor = true;
+            this.btGrayscale.Click += new System.EventHandler(this.btGrayscale_Click);
+            // 
+            // tbBrightness
+            // 
+            this.tbBrightness.LargeChange = 10;
+            this.tbBrightness.Location = new System.Drawing.Point(12, 282);
+            this.tbBrightness.Maximum = 255;
+            this.tbBrightness.Minimum = -255;
+            this.tbBrightness.Name = "tbBrightness";
+            this.tbBrightness.Size = new System.Drawing.Size(320, 45);
+            this.tbBrightness.TabIndex = 15;
+            this.tbBrightness.TickFrequency = 10;
+            this.tbBrightness.ValueChanged += new System.EventHandler(this.tbBrightness_ValueChanged);
+            // 
+            // lbBrightness
+            // 
+            this.lbBrightness.AutoSize = true;
+            this.lbBrightness.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbBrightness.Location = new System.Drawing.Point(12, 255);
+            this.lbBrightness.Name = "lbBrightness";
+            this.lbBrightness.Size = new System.Drawing.Size(75, 17);
+            this.lbBrightness.TabIndex = 15;
+            this.lbBrightness.Text = "Brightness";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(680, 473);
+            this.Controls.Add(this.tbBrightness);
+            this.Controls.Add(this.lbBrightness);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.buttonLoad);
             this.Controls.Add(this.panelDestination);
@@ -98,7 +151,9 @@ namespace ComputerVision
             this.Name = "MainForm";
             this.Text = "Form1";
             this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -108,8 +163,12 @@ namespace ComputerVision
         private System.Windows.Forms.Panel panelDestination;
         private System.Windows.Forms.Button buttonLoad;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button buttonGrayscale;
+        private System.Windows.Forms.Button btGrayscale;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
+        private System.Windows.Forms.Button btNegative;
+        private System.Windows.Forms.TrackBar tbBrightness;
+        private System.Windows.Forms.Label lbBrightness;
+        private System.Windows.Forms.ComboBox cbGrayscale;
     }
 }
 
