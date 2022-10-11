@@ -10,12 +10,17 @@ namespace ComputerVision
     {
         public int Height = 0;
         public int Width = 0;
-        private Bitmap image = null;
         private Rectangle rectangle;
         private BitmapData bitmapData = null;
         private Color color;
         private Point size;
         private int currentBitmapWidth = 0;
+
+        private Bitmap _image = null;
+        public Bitmap Image
+        {
+            get { return _image; }
+        }
 
         struct PixelData
         {
@@ -24,24 +29,24 @@ namespace ComputerVision
 
         public FastImage(Bitmap bitmap)
         {
-            image = bitmap;
-            Width = image.Width;
-            Height = image.Height;
-            size = new Point(image.Size);
+            _image = bitmap;
+            Width = _image.Width;
+            Height = _image.Height;
+            size = new Point(_image.Size);
             currentBitmapWidth = size.X;
         }
 
         public void Lock()
         {
             // Rectangle For Locking The Bitmap In Memory
-            rectangle = new Rectangle(0, 0, image.Width, image.Height);
+            rectangle = new Rectangle(0, 0, _image.Width, _image.Height);
             // Get The Bitmap's Pixel Data From The Locked Bitmap
-            bitmapData = image.LockBits(rectangle, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+            bitmapData = _image.LockBits(rectangle, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
         }
 
         public void Unlock()
         {
-            image.UnlockBits(bitmapData);
+            _image.UnlockBits(bitmapData);
         }
 
         public Color GetPixel(int col, int row)
@@ -69,7 +74,7 @@ namespace ComputerVision
 
         public Bitmap GetBitMap()
         {
-            return image;
+            return _image;
         }
 
     }

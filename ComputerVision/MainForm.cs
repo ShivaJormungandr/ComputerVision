@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing.Imaging;
+using System.IO;
 
 namespace ComputerVision
 {
@@ -13,7 +14,6 @@ namespace ComputerVision
     {
         private string sSourceFileName = "";
         private FastImage workImage;
-        private Bitmap image = null;
 
         public MainForm()
         {
@@ -31,7 +31,7 @@ namespace ComputerVision
         private void RefreshImage(Bitmap img)
         {
             panelDestination.BackgroundImage = null;
-            panelDestination.BackgroundImage = image;
+            panelDestination.BackgroundImage = workImage.Image;
         }
 
         private void ApplyGrayscale()
@@ -126,8 +126,9 @@ namespace ComputerVision
 
             if (sSourceFileName == "") return;
 
+            tbBrightness.Value = 0;
             panelSource.BackgroundImage = new Bitmap(sSourceFileName);
-            image = new Bitmap(sSourceFileName);
+            var image = new Bitmap(sSourceFileName);
             workImage = new FastImage(image);
         }
 
@@ -155,5 +156,16 @@ namespace ComputerVision
             SafeExecute(ApplyBrightness);
             RefreshImage(workImage.GetBitMap());
         }
+
+        private void btReset_Click(object sender, EventArgs e)
+        {
+            if (!File.Exists(sSourceFileName)) return;
+
+            var image = new Bitmap(sSourceFileName);
+            workImage = new FastImage(image);
+            RefreshImage(workImage.GetBitMap());
+        }
+
+
     }
 }

@@ -38,8 +38,12 @@ namespace ComputerVision
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.tbBrightness = new System.Windows.Forms.TrackBar();
             this.lbBrightness = new System.Windows.Forms.Label();
+            this.lbContrast = new System.Windows.Forms.Label();
+            this.tbContrast = new System.Windows.Forms.TrackBar();
+            this.btReset = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).BeginInit();
             this.SuspendLayout();
             // 
             // panelSource
@@ -77,6 +81,7 @@ namespace ComputerVision
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.cbGrayscale);
             this.panel1.Controls.Add(this.btNegative);
+            this.panel1.Controls.Add(this.btReset);
             this.panel1.Controls.Add(this.btGrayscale);
             this.panel1.Location = new System.Drawing.Point(348, 271);
             this.panel1.Name = "panel1";
@@ -118,9 +123,9 @@ namespace ComputerVision
             // tbBrightness
             // 
             this.tbBrightness.LargeChange = 10;
-            this.tbBrightness.Location = new System.Drawing.Point(12, 282);
-            this.tbBrightness.Maximum = 255;
-            this.tbBrightness.Minimum = -255;
+            this.tbBrightness.Location = new System.Drawing.Point(12, 275);
+            this.tbBrightness.Maximum = 100;
+            this.tbBrightness.Minimum = -100;
             this.tbBrightness.Name = "tbBrightness";
             this.tbBrightness.Size = new System.Drawing.Size(320, 45);
             this.tbBrightness.TabIndex = 15;
@@ -137,12 +142,46 @@ namespace ComputerVision
             this.lbBrightness.TabIndex = 15;
             this.lbBrightness.Text = "Brightness";
             // 
+            // lbContrast
+            // 
+            this.lbContrast.AutoSize = true;
+            this.lbContrast.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbContrast.Location = new System.Drawing.Point(12, 323);
+            this.lbContrast.Name = "lbContrast";
+            this.lbContrast.Size = new System.Drawing.Size(61, 17);
+            this.lbContrast.TabIndex = 15;
+            this.lbContrast.Text = "Contrast";
+            // 
+            // tbContrast
+            // 
+            this.tbContrast.LargeChange = 10;
+            this.tbContrast.Location = new System.Drawing.Point(12, 343);
+            this.tbContrast.Maximum = 100;
+            this.tbContrast.Minimum = -100;
+            this.tbContrast.Name = "tbContrast";
+            this.tbContrast.Size = new System.Drawing.Size(320, 45);
+            this.tbContrast.TabIndex = 15;
+            this.tbContrast.TickFrequency = 10;
+            this.tbContrast.ValueChanged += new System.EventHandler(this.tbBrightness_ValueChanged);
+            // 
+            // btReset
+            // 
+            this.btReset.Location = new System.Drawing.Point(240, 3);
+            this.btReset.Name = "btReset";
+            this.btReset.Size = new System.Drawing.Size(75, 23);
+            this.btReset.TabIndex = 13;
+            this.btReset.Text = "Reset";
+            this.btReset.UseVisualStyleBackColor = true;
+            this.btReset.Click += new System.EventHandler(this.btReset_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(680, 473);
+            this.Controls.Add(this.tbContrast);
             this.Controls.Add(this.tbBrightness);
+            this.Controls.Add(this.lbContrast);
             this.Controls.Add(this.lbBrightness);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.buttonLoad);
@@ -152,6 +191,7 @@ namespace ComputerVision
             this.Text = "Form1";
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -169,6 +209,9 @@ namespace ComputerVision
         private System.Windows.Forms.TrackBar tbBrightness;
         private System.Windows.Forms.Label lbBrightness;
         private System.Windows.Forms.ComboBox cbGrayscale;
+        private System.Windows.Forms.Label lbContrast;
+        private System.Windows.Forms.TrackBar tbContrast;
+        private System.Windows.Forms.Button btReset;
     }
 }
 
