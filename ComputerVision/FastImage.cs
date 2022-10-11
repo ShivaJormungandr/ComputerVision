@@ -71,11 +71,5 @@ namespace ComputerVision
                 pPixel->blue = c.B;
             }
         }
-
-        public Bitmap GetBitMap()
-        {
-            return _image;
-        }
-
     }
 }

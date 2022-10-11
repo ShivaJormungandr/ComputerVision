@@ -34,13 +34,13 @@ namespace ComputerVision
             this.panel1 = new System.Windows.Forms.Panel();
             this.cbGrayscale = new System.Windows.Forms.ComboBox();
             this.btNegative = new System.Windows.Forms.Button();
+            this.btReset = new System.Windows.Forms.Button();
             this.btGrayscale = new System.Windows.Forms.Button();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.tbBrightness = new System.Windows.Forms.TrackBar();
             this.lbBrightness = new System.Windows.Forms.Label();
             this.lbContrast = new System.Windows.Forms.Label();
             this.tbContrast = new System.Windows.Forms.TrackBar();
-            this.btReset = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).BeginInit();
@@ -110,6 +110,16 @@ namespace ComputerVision
             this.btNegative.UseVisualStyleBackColor = true;
             this.btNegative.Click += new System.EventHandler(this.btNegative_Click);
             // 
+            // btReset
+            // 
+            this.btReset.Location = new System.Drawing.Point(240, 3);
+            this.btReset.Name = "btReset";
+            this.btReset.Size = new System.Drawing.Size(75, 23);
+            this.btReset.TabIndex = 13;
+            this.btReset.Text = "Reset";
+            this.btReset.UseVisualStyleBackColor = true;
+            this.btReset.Click += new System.EventHandler(this.btReset_Click);
+            // 
             // btGrayscale
             // 
             this.btGrayscale.Location = new System.Drawing.Point(3, 3);
@@ -124,8 +134,8 @@ namespace ComputerVision
             // 
             this.tbBrightness.LargeChange = 10;
             this.tbBrightness.Location = new System.Drawing.Point(12, 275);
-            this.tbBrightness.Maximum = 100;
-            this.tbBrightness.Minimum = -100;
+            this.tbBrightness.Maximum = 255;
+            this.tbBrightness.Minimum = -255;
             this.tbBrightness.Name = "tbBrightness";
             this.tbBrightness.Size = new System.Drawing.Size(320, 45);
             this.tbBrightness.TabIndex = 15;
@@ -156,23 +166,13 @@ namespace ComputerVision
             // 
             this.tbContrast.LargeChange = 10;
             this.tbContrast.Location = new System.Drawing.Point(12, 343);
-            this.tbContrast.Maximum = 100;
-            this.tbContrast.Minimum = -100;
+            this.tbContrast.Maximum = 255;
+            this.tbContrast.Minimum = -255;
             this.tbContrast.Name = "tbContrast";
             this.tbContrast.Size = new System.Drawing.Size(320, 45);
             this.tbContrast.TabIndex = 15;
             this.tbContrast.TickFrequency = 10;
-            this.tbContrast.ValueChanged += new System.EventHandler(this.tbBrightness_ValueChanged);
-            // 
-            // btReset
-            // 
-            this.btReset.Location = new System.Drawing.Point(240, 3);
-            this.btReset.Name = "btReset";
-            this.btReset.Size = new System.Drawing.Size(75, 23);
-            this.btReset.TabIndex = 13;
-            this.btReset.Text = "Reset";
-            this.btReset.UseVisualStyleBackColor = true;
-            this.btReset.Click += new System.EventHandler(this.btReset_Click);
+            this.tbContrast.ValueChanged += new System.EventHandler(this.tbContrast_ValueChanged);
             // 
             // MainForm
             // 

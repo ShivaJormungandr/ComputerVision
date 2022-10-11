@@ -14,6 +14,7 @@ namespace ComputerVision
     {
         private string sSourceFileName = "";
         private FastImage workImage;
+        private Bitmap originalImage = null;
 
         public MainForm()
         {
@@ -91,7 +92,7 @@ namespace ComputerVision
             }
         }
 
-        private void ApplyBrightness()
+        private void ApplyBrightnessChange()
         {
             Color color;
             int delta = tbBrightness.Value;
@@ -119,6 +120,71 @@ namespace ComputerVision
             }
         }
 
+        private void ApplyContrastChange()
+        {
+            int minR = 255;
+            int minG = 255;
+            int minB = 255;
+            int maxR = 0;
+            int maxG = 0;
+            int maxB = 0;
+
+            for (int i = 0; i < workImage.Width; i++)
+            {
+                for (int j = 0; j < workImage.Height; j++)
+                {
+                    var color = workImage.GetPixel(i, j);
+
+                    int R = color.R;
+                    int G = color.G;
+                    int B = color.B;
+
+                    if (minR > R) minR = R;
+                    if (minG > G) minG = G;
+                    if (minB > B) minB = B;
+                    if (maxR < R) maxR = R;
+                    if (maxG < G) maxG = G;
+                    if (maxB < B) maxB = B;
+
+                }
+            }
+
+            int delta = tbContrast.Value;
+            int Ra = minR - delta;
+            int Ga = minG - delta;
+            int Ba = minB - delta;
+            int Rb = maxR + delta;
+            int Gb = maxG + delta;
+            int Bb = maxB + delta;
+
+            for (int i = 0; i < workImage.Width; i++)
+            {
+                for (int j = 0; j < workImage.Height; j++)
+                {
+                    var color = workImage.GetPixel(i, j);
+                    int R = color.R;
+                    int G = color.G;
+                    int B = color.B;
+
+
+                    int newR = (Rb - Ra) * (R - minR) / (maxR - minR) + Ra;
+                    int newG = (Gb - Ga) * (G - minG) / (maxG - minG)  + Ga;
+                    int newB = (Bb - Ba) * (B - minB) / (maxB - minB)  + Ba;
+
+                    color = Color.FromArgb(newR < 0 ? 0 : newR > 255 ? 255 : newR,
+                                            newG < 0 ? 0 : newG > 255 ? 255 : newG,
+                                            newB < 0 ? 0 : newB > 255 ? 255 : newB);
+
+                    workImage.SetPixel(i, j, color);
+                }
+            }
+        }
+
+        private void ResetImage()
+        {
+            var image = originalImage.Clone(new Rectangle(0, 0, originalImage.Width, originalImage.Height), originalImage.PixelFormat);
+            workImage = new FastImage(image);
+        }
         private void buttonLoad_Click(object sender, EventArgs e)
         {
             openFileDialog.ShowDialog();
@@ -128,6 +194,8 @@ namespace ComputerVision
 
             tbBrightness.Value = 0;
             panelSource.BackgroundImage = new Bitmap(sSourceFileName);
+
+            originalImage = new Bitmap(sSourceFileName);
             var image = new Bitmap(sSourceFileName);
             workImage = new FastImage(image);
         }
@@ -137,7 +205,7 @@ namespace ComputerVision
             if (workImage == null) return;
 
             SafeExecute(ApplyGrayscale);
-            RefreshImage(workImage.GetBitMap());
+            RefreshImage(workImage?.Image);
         }
 
         private void btNegative_Click(object sender, EventArgs e)
@@ -145,7 +213,7 @@ namespace ComputerVision
             if (workImage == null) return;
 
             SafeExecute(ApplyNegative);
-            RefreshImage(workImage.GetBitMap());
+            RefreshImage(workImage?.Image);
         }
 
         private void tbBrightness_ValueChanged(object sender, EventArgs e)
@@ -153,19 +221,27 @@ namespace ComputerVision
             if (workImage == null) return;
             lbBrightness.Text = $"Brightness {tbBrightness.Value}";
 
-            SafeExecute(ApplyBrightness);
-            RefreshImage(workImage.GetBitMap());
+            //ResetImage();
+            SafeExecute(ApplyBrightnessChange);
+            RefreshImage(workImage?.Image);
         }
 
         private void btReset_Click(object sender, EventArgs e)
         {
-            if (!File.Exists(sSourceFileName)) return;
+            if (originalImage == null) return;
 
-            var image = new Bitmap(sSourceFileName);
-            workImage = new FastImage(image);
-            RefreshImage(workImage.GetBitMap());
+            ResetImage();
+            RefreshImage(workImage.Image);
         }
 
+        private void tbContrast_ValueChanged(object sender, EventArgs e)
+        {
+            if (workImage == null) return;
+            lbContrast.Text = $"Contrastr {tbContrast.Value}";
 
+            //ResetImage();
+            SafeExecute(ApplyContrastChange);
+            RefreshImage(workImage?.Image);
+        }
     }
 }
