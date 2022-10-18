@@ -51,7 +51,7 @@ namespace ComputerVision
 
                     byte average;
 
-                    if (cbGrayscale.SelectedItem == "AVG")
+                    if (cbGrayscale.SelectedItem.ToString() == "AVG")
                     {
                         average = (byte)((R + G + B) / 3);
                     }
@@ -168,14 +168,85 @@ namespace ComputerVision
 
 
                     int newR = (Rb - Ra) * (R - minR) / (maxR - minR) + Ra;
-                    int newG = (Gb - Ga) * (G - minG) / (maxG - minG)  + Ga;
-                    int newB = (Bb - Ba) * (B - minB) / (maxB - minB)  + Ba;
+                    int newG = (Gb - Ga) * (G - minG) / (maxG - minG) + Ga;
+                    int newB = (Bb - Ba) * (B - minB) / (maxB - minB) + Ba;
 
                     color = Color.FromArgb(newR < 0 ? 0 : newR > 255 ? 255 : newR,
                                             newG < 0 ? 0 : newG > 255 ? 255 : newG,
                                             newB < 0 ? 0 : newB > 255 ? 255 : newB);
 
                     workImage.SetPixel(i, j, color);
+                }
+            }
+        }
+
+        private void ApplyHistogramEqualisationGrayscale()
+        {
+            int[] histo = new int[256];
+
+            for (int i = 0; i < workImage.Width; i++)
+            {
+                for (int j = 0; j < workImage.Height; j++)
+                {
+                    Color color = workImage.GetPixel(i, j);
+                    byte R = color.R;
+                    byte G = color.G;
+                    byte B = color.B;
+
+                    byte average;
+
+                    if (cbGrayscale.SelectedItem.ToString() == "AVG")
+                    {
+                        average = (byte)((R + G + B) / 3);
+                    }
+                    else
+                    {
+                        average = (byte)((0.299 * R + 0.587 * G + 0.114 * B) / 3);
+                    }
+
+                    histo[average] += 1;
+                }
+            }
+
+            int[] histoC = new int[256];
+
+            for (int i = 1; i < 255; i++)
+            {
+                histoC[i] = histoC[i - 1] + histo[i];
+            }
+
+            int[] transf = new int[256];
+            for (int i = 0; i < histo.Length; i++)
+            {
+                transf[i] = (histoC[i] * 255)/(workImage.Width * workImage.Height);
+            }
+
+            for (int i = 0; i < workImage.Width; i++)
+            {
+                for (int j = 0; j < workImage.Height; j++)
+                {
+                    var color = workImage.GetPixel(i, j);
+
+                    byte R = color.R;
+                    byte G = color.G;
+                    byte B = color.B;
+
+                    byte average;
+
+                    if (cbGrayscale.SelectedItem.ToString() == "AVG")
+                    {
+                        average = (byte)((R + G + B) / 3);
+                    }
+                    else
+                    {
+                        average = (byte)((0.299 * R + 0.587 * G + 0.114 * B) / 3);
+                    }
+
+
+                    color = Color.FromArgb(transf[average], transf[average], transf[average]);
+
+                    workImage.SetPixel(i, j, color);
+
                 }
             }
         }
@@ -241,6 +312,14 @@ namespace ComputerVision
 
             //ResetImage();
             SafeExecute(ApplyContrastChange);
+            RefreshImage(workImage?.Image);
+        }
+
+        private void btHistoEqGs_Click(object sender, EventArgs e)
+        {
+            if (workImage == null) return;
+
+            SafeExecute(ApplyHistogramEqualisationGrayscale);
             RefreshImage(workImage?.Image);
         }
     }

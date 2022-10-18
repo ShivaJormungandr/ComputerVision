@@ -41,6 +41,7 @@ namespace ComputerVision
             this.lbBrightness = new System.Windows.Forms.Label();
             this.lbContrast = new System.Windows.Forms.Label();
             this.tbContrast = new System.Windows.Forms.TrackBar();
+            this.btHistoEqGs = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).BeginInit();
@@ -80,6 +81,7 @@ namespace ComputerVision
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.cbGrayscale);
+            this.panel1.Controls.Add(this.btHistoEqGs);
             this.panel1.Controls.Add(this.btNegative);
             this.panel1.Controls.Add(this.btReset);
             this.panel1.Controls.Add(this.btGrayscale);
@@ -174,6 +176,16 @@ namespace ComputerVision
             this.tbContrast.TickFrequency = 10;
             this.tbContrast.ValueChanged += new System.EventHandler(this.tbContrast_ValueChanged);
             // 
+            // btHistoEqGs
+            // 
+            this.btHistoEqGs.Location = new System.Drawing.Point(3, 61);
+            this.btHistoEqGs.Name = "btHistoEqGs";
+            this.btHistoEqGs.Size = new System.Drawing.Size(75, 23);
+            this.btHistoEqGs.TabIndex = 13;
+            this.btHistoEqGs.Text = "Histo Eq Gs";
+            this.btHistoEqGs.UseVisualStyleBackColor = true;
+            this.btHistoEqGs.Click += new System.EventHandler(this.btHistoEqGs_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -212,6 +224,7 @@ namespace ComputerVision
         private System.Windows.Forms.Label lbContrast;
         private System.Windows.Forms.TrackBar tbContrast;
         private System.Windows.Forms.Button btReset;
+        private System.Windows.Forms.Button btHistoEqGs;
     }
 }
 
