@@ -21,6 +21,7 @@ namespace ComputerVision
             InitializeComponent();
             cbGrayscale.SelectedIndex = 0;
             cbReflexion.SelectedIndex = 0;
+            tbWeight.Text = "3";
         }
 
         private void SafeExecute(Action action)
@@ -292,14 +293,14 @@ namespace ComputerVision
             {
                 var theta = 45;
                 int x0 = workImage.Width / 2;
-                int y0 = workImage.Height /2;
+                int y0 = workImage.Height / 2;
 
                 for (int i = 0; i < workImage.Width; i++)
                 {
                     for (int j = 0; j < workImage.Height; j++)
                     {
                         var color = original.GetPixel(i, j);
-                        var delta = (i - x0) * Math.Sin(theta) -  (j - y0) * Math.Cos(theta);
+                        var delta = (i - x0) * Math.Sin(theta) - (j - y0) * Math.Cos(theta);
                         var newX = i - 2 * delta * Math.Sin(theta);
                         var newY = j - 2 * delta * Math.Cos(theta);
                         if (newX == workImage.Width || newX < 0) continue;
@@ -309,6 +310,62 @@ namespace ComputerVision
                 }
             }
         }
+
+        private void ApplayLowPassFilter()
+        {
+
+            var weightString = tbWeight.Text;
+            int weight;
+            var habemusNumar = int.TryParse(weightString, out weight);
+            if (!habemusNumar) return;
+
+            double temp = 1 / Math.Pow((weight + 2), 2);
+            double[,] h = new double[3, 3];
+
+            h[0, 0] = 1;
+            h[0, 1] = weight;
+            h[0, 2] = 1;
+            h[1, 0] = weight;
+            h[1, 1] = weight * weight;
+            h[1, 2] = weight;
+            h[2, 0] = 1;
+            h[2, 1] = weight;
+            h[2, 2] = 1;
+
+            for (int r = 1; r < workImage.Height - 1; r++)
+            {
+                for (int c = 1; c < workImage.Width - 1; c++)
+                {
+                    double sumR = 0;
+                    double sumG = 0;
+                    double sumB = 0;
+                    for (int row = r - 1; row <= r + 1; row++)
+                    {
+                        for (int col = c - 1; col <= c + 1; col++)
+                        {
+                            var color = workImage.GetPixel(col, row);
+
+                            sumR = sumR + color.R * h[row - r + 1, col - c + 1];
+                            sumG = sumG + color.G * h[row - r + 1, col - c + 1];
+                            sumB = sumB + color.B * h[row - r + 1, col - c + 1];
+                        }
+                    }
+
+                    sumR = sumR / ((weight + 2) * (weight + 2));
+                    sumG = sumG / ((weight + 2) * (weight + 2));
+                    sumB = sumB / ((weight + 2) * (weight + 2));
+                    var cl = Color.FromArgb((int)sumR, (int)sumG, (int)sumB);
+                    workImage.SetPixel(c, r, cl);
+                }
+
+            }
+        }
+
+        private void ApplyMedianFilter()
+        {
+
+        }
+
         private void ResetImage()
         {
             var image = originalImage.Clone(new Rectangle(0, 0, originalImage.Width, originalImage.Height), originalImage.PixelFormat);
@@ -392,6 +449,23 @@ namespace ComputerVision
             RefreshImage(workImage?.Image);
         }
 
+        private void btLowPassFilter_Click(object sender, EventArgs e)
+        {
+            if (workImage == null) return;
+
+            SafeExecute(ApplayLowPassFilter);
+            RefreshImage(workImage?.Image);
+        }
+
+        private void btMedianFilter_Click(object sender, EventArgs e)
+        {
+            if (workImage == null) return;
+
+            SafeExecute(ApplyMedianFilter);
+            RefreshImage(workImage?.Image);
+        }
         #endregion
+
+
     }
 }

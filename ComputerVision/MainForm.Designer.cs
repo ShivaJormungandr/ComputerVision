@@ -32,7 +32,10 @@ namespace ComputerVision
             this.panelDestination = new System.Windows.Forms.Panel();
             this.buttonLoad = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.cbReflexion = new System.Windows.Forms.ComboBox();
             this.cbGrayscale = new System.Windows.Forms.ComboBox();
+            this.btReflexion = new System.Windows.Forms.Button();
+            this.btHistoEqGs = new System.Windows.Forms.Button();
             this.btNegative = new System.Windows.Forms.Button();
             this.btReset = new System.Windows.Forms.Button();
             this.btGrayscale = new System.Windows.Forms.Button();
@@ -41,9 +44,9 @@ namespace ComputerVision
             this.lbBrightness = new System.Windows.Forms.Label();
             this.lbContrast = new System.Windows.Forms.Label();
             this.tbContrast = new System.Windows.Forms.TrackBar();
-            this.btHistoEqGs = new System.Windows.Forms.Button();
-            this.btReflexion = new System.Windows.Forms.Button();
-            this.cbReflexion = new System.Windows.Forms.ComboBox();
+            this.btLowPassFilter = new System.Windows.Forms.Button();
+            this.tbWeight = new System.Windows.Forms.TextBox();
+            this.btMedianFilter = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).BeginInit();
@@ -82,9 +85,12 @@ namespace ComputerVision
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.tbWeight);
             this.panel1.Controls.Add(this.cbReflexion);
             this.panel1.Controls.Add(this.cbGrayscale);
             this.panel1.Controls.Add(this.btReflexion);
+            this.panel1.Controls.Add(this.btMedianFilter);
+            this.panel1.Controls.Add(this.btLowPassFilter);
             this.panel1.Controls.Add(this.btHistoEqGs);
             this.panel1.Controls.Add(this.btNegative);
             this.panel1.Controls.Add(this.btReset);
@@ -93,6 +99,19 @@ namespace ComputerVision
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(320, 190);
             this.panel1.TabIndex = 3;
+            // 
+            // cbReflexion
+            // 
+            this.cbReflexion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbReflexion.FormattingEnabled = true;
+            this.cbReflexion.Items.AddRange(new object[] {
+            "Horizontal",
+            "Vertical",
+            "Oblique"});
+            this.cbReflexion.Location = new System.Drawing.Point(84, 34);
+            this.cbReflexion.Name = "cbReflexion";
+            this.cbReflexion.Size = new System.Drawing.Size(121, 21);
+            this.cbReflexion.TabIndex = 14;
             // 
             // cbGrayscale
             // 
@@ -106,9 +125,29 @@ namespace ComputerVision
             this.cbGrayscale.Size = new System.Drawing.Size(121, 21);
             this.cbGrayscale.TabIndex = 14;
             // 
+            // btReflexion
+            // 
+            this.btReflexion.Location = new System.Drawing.Point(3, 32);
+            this.btReflexion.Name = "btReflexion";
+            this.btReflexion.Size = new System.Drawing.Size(75, 23);
+            this.btReflexion.TabIndex = 13;
+            this.btReflexion.Text = "Reflexion";
+            this.btReflexion.UseVisualStyleBackColor = true;
+            this.btReflexion.Click += new System.EventHandler(this.btReflexion_Click);
+            // 
+            // btHistoEqGs
+            // 
+            this.btHistoEqGs.Location = new System.Drawing.Point(3, 133);
+            this.btHistoEqGs.Name = "btHistoEqGs";
+            this.btHistoEqGs.Size = new System.Drawing.Size(75, 23);
+            this.btHistoEqGs.TabIndex = 13;
+            this.btHistoEqGs.Text = "Histo Eq Gs";
+            this.btHistoEqGs.UseVisualStyleBackColor = true;
+            this.btHistoEqGs.Click += new System.EventHandler(this.btHistoEqGs_Click);
+            // 
             // btNegative
             // 
-            this.btNegative.Location = new System.Drawing.Point(3, 32);
+            this.btNegative.Location = new System.Drawing.Point(3, 162);
             this.btNegative.Name = "btNegative";
             this.btNegative.Size = new System.Drawing.Size(75, 23);
             this.btNegative.TabIndex = 13;
@@ -180,38 +219,32 @@ namespace ComputerVision
             this.tbContrast.TickFrequency = 10;
             this.tbContrast.ValueChanged += new System.EventHandler(this.tbContrast_ValueChanged);
             // 
-            // btHistoEqGs
+            // btLowPassFilter
             // 
-            this.btHistoEqGs.Location = new System.Drawing.Point(3, 61);
-            this.btHistoEqGs.Name = "btHistoEqGs";
-            this.btHistoEqGs.Size = new System.Drawing.Size(75, 23);
-            this.btHistoEqGs.TabIndex = 13;
-            this.btHistoEqGs.Text = "Histo Eq Gs";
-            this.btHistoEqGs.UseVisualStyleBackColor = true;
-            this.btHistoEqGs.Click += new System.EventHandler(this.btHistoEqGs_Click);
+            this.btLowPassFilter.Location = new System.Drawing.Point(3, 61);
+            this.btLowPassFilter.Name = "btLowPassFilter";
+            this.btLowPassFilter.Size = new System.Drawing.Size(83, 23);
+            this.btLowPassFilter.TabIndex = 13;
+            this.btLowPassFilter.Text = "Low Pass filter";
+            this.btLowPassFilter.UseVisualStyleBackColor = true;
+            this.btLowPassFilter.Click += new System.EventHandler(this.btLowPassFilter_Click);
             // 
-            // btReflexion
+            // tbWeight
             // 
-            this.btReflexion.Location = new System.Drawing.Point(3, 90);
-            this.btReflexion.Name = "btReflexion";
-            this.btReflexion.Size = new System.Drawing.Size(75, 23);
-            this.btReflexion.TabIndex = 13;
-            this.btReflexion.Text = "Reflexion";
-            this.btReflexion.UseVisualStyleBackColor = true;
-            this.btReflexion.Click += new System.EventHandler(this.btReflexion_Click);
+            this.tbWeight.Location = new System.Drawing.Point(92, 61);
+            this.tbWeight.Name = "tbWeight";
+            this.tbWeight.Size = new System.Drawing.Size(113, 20);
+            this.tbWeight.TabIndex = 15;
             // 
-            // cbReflexion
+            // btMedianFilter
             // 
-            this.cbReflexion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbReflexion.FormattingEnabled = true;
-            this.cbReflexion.Items.AddRange(new object[] {
-            "Horizontal",
-            "Vertical",
-            "Oblique"});
-            this.cbReflexion.Location = new System.Drawing.Point(84, 90);
-            this.cbReflexion.Name = "cbReflexion";
-            this.cbReflexion.Size = new System.Drawing.Size(121, 21);
-            this.cbReflexion.TabIndex = 14;
+            this.btMedianFilter.Location = new System.Drawing.Point(3, 90);
+            this.btMedianFilter.Name = "btMedianFilter";
+            this.btMedianFilter.Size = new System.Drawing.Size(75, 23);
+            this.btMedianFilter.TabIndex = 13;
+            this.btMedianFilter.Text = "Median filter";
+            this.btMedianFilter.UseVisualStyleBackColor = true;
+            this.btMedianFilter.Click += new System.EventHandler(this.btMedianFilter_Click);
             // 
             // MainForm
             // 
@@ -229,6 +262,7 @@ namespace ComputerVision
             this.Name = "MainForm";
             this.Text = "Form1";
             this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).EndInit();
             this.ResumeLayout(false);
@@ -254,6 +288,9 @@ namespace ComputerVision
         private System.Windows.Forms.Button btHistoEqGs;
         private System.Windows.Forms.Button btReflexion;
         private System.Windows.Forms.ComboBox cbReflexion;
+        private System.Windows.Forms.Button btLowPassFilter;
+        private System.Windows.Forms.TextBox tbWeight;
+        private System.Windows.Forms.Button btMedianFilter;
     }
 }
 
