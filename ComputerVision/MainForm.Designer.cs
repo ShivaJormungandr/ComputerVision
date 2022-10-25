@@ -42,6 +42,8 @@ namespace ComputerVision
             this.lbContrast = new System.Windows.Forms.Label();
             this.tbContrast = new System.Windows.Forms.TrackBar();
             this.btHistoEqGs = new System.Windows.Forms.Button();
+            this.btReflexion = new System.Windows.Forms.Button();
+            this.cbReflexion = new System.Windows.Forms.ComboBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).BeginInit();
@@ -80,7 +82,9 @@ namespace ComputerVision
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.cbReflexion);
             this.panel1.Controls.Add(this.cbGrayscale);
+            this.panel1.Controls.Add(this.btReflexion);
             this.panel1.Controls.Add(this.btHistoEqGs);
             this.panel1.Controls.Add(this.btNegative);
             this.panel1.Controls.Add(this.btReset);
@@ -186,6 +190,29 @@ namespace ComputerVision
             this.btHistoEqGs.UseVisualStyleBackColor = true;
             this.btHistoEqGs.Click += new System.EventHandler(this.btHistoEqGs_Click);
             // 
+            // btReflexion
+            // 
+            this.btReflexion.Location = new System.Drawing.Point(3, 90);
+            this.btReflexion.Name = "btReflexion";
+            this.btReflexion.Size = new System.Drawing.Size(75, 23);
+            this.btReflexion.TabIndex = 13;
+            this.btReflexion.Text = "Reflexion";
+            this.btReflexion.UseVisualStyleBackColor = true;
+            this.btReflexion.Click += new System.EventHandler(this.btReflexion_Click);
+            // 
+            // cbReflexion
+            // 
+            this.cbReflexion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbReflexion.FormattingEnabled = true;
+            this.cbReflexion.Items.AddRange(new object[] {
+            "Horizontal",
+            "Vertical",
+            "Oblique"});
+            this.cbReflexion.Location = new System.Drawing.Point(84, 90);
+            this.cbReflexion.Name = "cbReflexion";
+            this.cbReflexion.Size = new System.Drawing.Size(121, 21);
+            this.cbReflexion.TabIndex = 14;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -225,6 +252,8 @@ namespace ComputerVision
         private System.Windows.Forms.TrackBar tbContrast;
         private System.Windows.Forms.Button btReset;
         private System.Windows.Forms.Button btHistoEqGs;
+        private System.Windows.Forms.Button btReflexion;
+        private System.Windows.Forms.ComboBox cbReflexion;
     }
 }
 

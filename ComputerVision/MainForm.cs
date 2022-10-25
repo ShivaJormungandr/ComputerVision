@@ -20,6 +20,7 @@ namespace ComputerVision
         {
             InitializeComponent();
             cbGrayscale.SelectedIndex = 0;
+            cbReflexion.SelectedIndex = 0;
         }
 
         private void SafeExecute(Action action)
@@ -218,7 +219,7 @@ namespace ComputerVision
             int[] transf = new int[256];
             for (int i = 0; i < histo.Length; i++)
             {
-                transf[i] = (histoC[i] * 255)/(workImage.Width * workImage.Height);
+                transf[i] = (histoC[i] * 255) / (workImage.Width * workImage.Height);
             }
 
             for (int i = 0; i < workImage.Width; i++)
@@ -251,11 +252,71 @@ namespace ComputerVision
             }
         }
 
+        private void ApplyReflexion()
+        {
+            workImage.Unlock();
+            Bitmap originalBit = workImage.Image.Clone(new Rectangle(0, 0, workImage.Width, workImage.Height), workImage.Image.PixelFormat);
+            FastImage original = new FastImage(originalBit);
+            workImage.Lock();
+            original.Lock();
+
+            if (cbReflexion.SelectedItem.ToString() == "Horizontal")
+            {
+                var yLine = workImage.Height / 2;
+                for (int i = 0; i < workImage.Width; i++)
+                {
+                    for (int j = 0; j < workImage.Height; j++)
+                    {
+                        var color = original.GetPixel(i, j);
+                        var newY = 2 * yLine - j;
+                        if (newY >= workImage.Height || newY < 0) continue;
+                        workImage.SetPixel(i, newY, color);
+                    }
+                }
+            }
+            else if (cbReflexion.SelectedItem.ToString() == "Vertical")
+            {
+                var xLine = workImage.Width / 2;
+                for (int i = 0; i < workImage.Width; i++)
+                {
+                    for (int j = 0; j < workImage.Height; j++)
+                    {
+                        var color = original.GetPixel(i, j);
+                        var newX = 2 * xLine - i;
+                        if (newX >= workImage.Width || newX < 0) continue;
+                        workImage.SetPixel(newX, j, color);
+                    }
+                }
+            }
+            else
+            {
+                var theta = 45;
+                int x0 = workImage.Width / 2;
+                int y0 = workImage.Height /2;
+
+                for (int i = 0; i < workImage.Width; i++)
+                {
+                    for (int j = 0; j < workImage.Height; j++)
+                    {
+                        var color = original.GetPixel(i, j);
+                        var delta = (i - x0) * Math.Sin(theta) -  (j - y0) * Math.Cos(theta);
+                        var newX = i - 2 * delta * Math.Sin(theta);
+                        var newY = j - 2 * delta * Math.Cos(theta);
+                        if (newX == workImage.Width || newX < 0) continue;
+                        if (newY == workImage.Height || newY < 0) continue;
+                        //workImage.SetPixel(newX, newY, color);
+                    }
+                }
+            }
+        }
         private void ResetImage()
         {
             var image = originalImage.Clone(new Rectangle(0, 0, originalImage.Width, originalImage.Height), originalImage.PixelFormat);
             workImage = new FastImage(image);
         }
+
+        #region Events
+
         private void buttonLoad_Click(object sender, EventArgs e)
         {
             openFileDialog.ShowDialog();
@@ -322,5 +383,15 @@ namespace ComputerVision
             SafeExecute(ApplyHistogramEqualisationGrayscale);
             RefreshImage(workImage?.Image);
         }
+
+        private void btReflexion_Click(object sender, EventArgs e)
+        {
+            if (workImage == null) return;
+
+            SafeExecute(ApplyReflexion);
+            RefreshImage(workImage?.Image);
+        }
+
+        #endregion
     }
 }
