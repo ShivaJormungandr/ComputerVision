@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 
 namespace ComputerVision
 {
@@ -319,7 +320,6 @@ namespace ComputerVision
             var habemusNumar = int.TryParse(weightString, out weight);
             if (!habemusNumar) return;
 
-            double temp = 1 / Math.Pow((weight + 2), 2);
             double[,] h = new double[3, 3];
 
             h[0, 0] = 1;
@@ -345,15 +345,15 @@ namespace ComputerVision
                         {
                             var color = workImage.GetPixel(col, row);
 
-                            sumR = sumR + color.R * h[row - r + 1, col - c + 1];
-                            sumG = sumG + color.G * h[row - r + 1, col - c + 1];
-                            sumB = sumB + color.B * h[row - r + 1, col - c + 1];
+                            sumR += color.R * h[row - r + 1, col - c + 1];
+                            sumG += color.G * h[row - r + 1, col - c + 1];
+                            sumB += color.B * h[row - r + 1, col - c + 1];
                         }
                     }
 
-                    sumR = sumR / ((weight + 2) * (weight + 2));
-                    sumG = sumG / ((weight + 2) * (weight + 2));
-                    sumB = sumB / ((weight + 2) * (weight + 2));
+                    sumR /= ((weight + 2) * (weight + 2));
+                    sumG /= ((weight + 2) * (weight + 2));
+                    sumB /= ((weight + 2) * (weight + 2));
                     var cl = Color.FromArgb((int)sumR, (int)sumG, (int)sumB);
                     workImage.SetPixel(c, r, cl);
                 }
@@ -363,9 +363,88 @@ namespace ComputerVision
 
         private void ApplyMedianFilter()
         {
-
+            throw new NotImplementedException();
         }
 
+        private Color CBP(int x, int y, int CS, int SR, int T)
+        {
+            Dictionary<Color, int> Q = new Dictionary<Color, int>();
+
+            for (int col = x - SR; col <= x + SR; col++)
+            {
+                if (col <= 0 || col >= workImage.Width) continue;
+                for (int row = y - SR; row <= y + SR; row++)
+                {
+                    if (row <= 0 || row >= workImage.Height) continue;
+                    if (col == x && row == y) continue;
+                    if (SAD(x, y, col, row, CS) < T && !Salt_Pepper(col, row))
+                    {
+                        var c = workImage.GetPixel(col, row);
+                        if (Q.ContainsKey(c))
+                        {
+                            Q[c] = Q[c]++;
+                        }
+                        else
+                        {
+                            Q.Add(c, 1);
+                        }
+                    }
+                }
+            }
+
+            if(Q.Count == 0)
+            {
+                var t = workImage.GetPixel(x, y);
+                Q.Add(Color.Black, 1);
+            }
+            var maxFreq = Q.Values.Max();
+            return Q.Keys.Where(color => Q[color] == maxFreq).First();
+        }
+        private bool Salt_Pepper(int x, int y)
+        {
+            var c = workImage.GetPixel(x, y);
+            if (c.ToArgb() == Color.Black.ToArgb() || c.ToArgb() == Color.White.ToArgb()) return true;
+            return false;
+        }
+        private int SAD(int x1, int y1, int x2, int y2, int CS)
+        {
+            int S = 0;
+            for (int col = -CS / 2; col <= CS / 2; col++)
+            {
+                if ((col + x1 <= 0 || col + x1 >= workImage.Width)
+                    || (col + x2 <= 0 || col + x2 >= workImage.Width)) continue;
+                for (int row = -CS / 2; row <= CS / 2; row++)
+                {
+                    if ((row + y1 <= 0 || row + y1 >= workImage.Height)
+                        || (row + y2 <= 0 || row + y2 >= workImage.Height)) continue;
+                    if (col == 0 && row == 0) continue;
+
+                    var c1 = workImage.GetPixel(col + x1, row + y1);
+                    var c2 = workImage.GetPixel(col + x2, row + y2);
+                    S += Math.Abs(c1.ToArgb() - c2.ToArgb());
+                }
+            }
+            return S;
+        }
+
+        private void CBPF(int CS = 3, int SR = 4, int T = 500)
+        {
+            for(int col = 0; col < workImage.Width; col++)
+            {
+                for(int row = 0; row < workImage.Height; row++)
+                {
+                    if (Salt_Pepper(col, row))
+                    {
+                        workImage.SetPixel(col, row, CBP(col, row, CS, SR, T));
+                    }
+                }
+            }
+        }
+
+        private void ApplyMarkovFilter()
+        {
+            CBPF();
+        }
         private void ResetImage()
         {
             var image = originalImage.Clone(new Rectangle(0, 0, originalImage.Width, originalImage.Height), originalImage.PixelFormat);
@@ -462,6 +541,13 @@ namespace ComputerVision
             if (workImage == null) return;
 
             SafeExecute(ApplyMedianFilter);
+            RefreshImage(workImage?.Image);
+        }
+        private void btMarkovFilter_Click(object sender, EventArgs e)
+        {
+            if (workImage == null) return;
+
+            SafeExecute(ApplyMarkovFilter);
             RefreshImage(workImage?.Image);
         }
         #endregion

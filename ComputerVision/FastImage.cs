@@ -17,10 +17,7 @@ namespace ComputerVision
         private int currentBitmapWidth = 0;
 
         private Bitmap _image = null;
-        public Bitmap Image
-        {
-            get { return _image; }
-        }
+        public Bitmap Image => _image;
 
         struct PixelData
         {

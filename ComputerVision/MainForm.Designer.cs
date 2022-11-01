@@ -32,9 +32,12 @@ namespace ComputerVision
             this.panelDestination = new System.Windows.Forms.Panel();
             this.buttonLoad = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.tbWeight = new System.Windows.Forms.TextBox();
             this.cbReflexion = new System.Windows.Forms.ComboBox();
             this.cbGrayscale = new System.Windows.Forms.ComboBox();
             this.btReflexion = new System.Windows.Forms.Button();
+            this.btMedianFilter = new System.Windows.Forms.Button();
+            this.btLowPassFilter = new System.Windows.Forms.Button();
             this.btHistoEqGs = new System.Windows.Forms.Button();
             this.btNegative = new System.Windows.Forms.Button();
             this.btReset = new System.Windows.Forms.Button();
@@ -44,9 +47,7 @@ namespace ComputerVision
             this.lbBrightness = new System.Windows.Forms.Label();
             this.lbContrast = new System.Windows.Forms.Label();
             this.tbContrast = new System.Windows.Forms.TrackBar();
-            this.btLowPassFilter = new System.Windows.Forms.Button();
-            this.tbWeight = new System.Windows.Forms.TextBox();
-            this.btMedianFilter = new System.Windows.Forms.Button();
+            this.btMarkovFilter = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).BeginInit();
@@ -89,6 +90,7 @@ namespace ComputerVision
             this.panel1.Controls.Add(this.cbReflexion);
             this.panel1.Controls.Add(this.cbGrayscale);
             this.panel1.Controls.Add(this.btReflexion);
+            this.panel1.Controls.Add(this.btMarkovFilter);
             this.panel1.Controls.Add(this.btMedianFilter);
             this.panel1.Controls.Add(this.btLowPassFilter);
             this.panel1.Controls.Add(this.btHistoEqGs);
@@ -99,6 +101,13 @@ namespace ComputerVision
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(320, 190);
             this.panel1.TabIndex = 3;
+            // 
+            // tbWeight
+            // 
+            this.tbWeight.Location = new System.Drawing.Point(92, 61);
+            this.tbWeight.Name = "tbWeight";
+            this.tbWeight.Size = new System.Drawing.Size(113, 20);
+            this.tbWeight.TabIndex = 15;
             // 
             // cbReflexion
             // 
@@ -134,6 +143,26 @@ namespace ComputerVision
             this.btReflexion.Text = "Reflexion";
             this.btReflexion.UseVisualStyleBackColor = true;
             this.btReflexion.Click += new System.EventHandler(this.btReflexion_Click);
+            // 
+            // btMedianFilter
+            // 
+            this.btMedianFilter.Location = new System.Drawing.Point(3, 90);
+            this.btMedianFilter.Name = "btMedianFilter";
+            this.btMedianFilter.Size = new System.Drawing.Size(75, 23);
+            this.btMedianFilter.TabIndex = 13;
+            this.btMedianFilter.Text = "Median filter";
+            this.btMedianFilter.UseVisualStyleBackColor = true;
+            this.btMedianFilter.Click += new System.EventHandler(this.btMedianFilter_Click);
+            // 
+            // btLowPassFilter
+            // 
+            this.btLowPassFilter.Location = new System.Drawing.Point(3, 61);
+            this.btLowPassFilter.Name = "btLowPassFilter";
+            this.btLowPassFilter.Size = new System.Drawing.Size(83, 23);
+            this.btLowPassFilter.TabIndex = 13;
+            this.btLowPassFilter.Text = "Low Pass filter";
+            this.btLowPassFilter.UseVisualStyleBackColor = true;
+            this.btLowPassFilter.Click += new System.EventHandler(this.btLowPassFilter_Click);
             // 
             // btHistoEqGs
             // 
@@ -219,32 +248,15 @@ namespace ComputerVision
             this.tbContrast.TickFrequency = 10;
             this.tbContrast.ValueChanged += new System.EventHandler(this.tbContrast_ValueChanged);
             // 
-            // btLowPassFilter
+            // btMarkovFilter
             // 
-            this.btLowPassFilter.Location = new System.Drawing.Point(3, 61);
-            this.btLowPassFilter.Name = "btLowPassFilter";
-            this.btLowPassFilter.Size = new System.Drawing.Size(83, 23);
-            this.btLowPassFilter.TabIndex = 13;
-            this.btLowPassFilter.Text = "Low Pass filter";
-            this.btLowPassFilter.UseVisualStyleBackColor = true;
-            this.btLowPassFilter.Click += new System.EventHandler(this.btLowPassFilter_Click);
-            // 
-            // tbWeight
-            // 
-            this.tbWeight.Location = new System.Drawing.Point(92, 61);
-            this.tbWeight.Name = "tbWeight";
-            this.tbWeight.Size = new System.Drawing.Size(113, 20);
-            this.tbWeight.TabIndex = 15;
-            // 
-            // btMedianFilter
-            // 
-            this.btMedianFilter.Location = new System.Drawing.Point(3, 90);
-            this.btMedianFilter.Name = "btMedianFilter";
-            this.btMedianFilter.Size = new System.Drawing.Size(75, 23);
-            this.btMedianFilter.TabIndex = 13;
-            this.btMedianFilter.Text = "Median filter";
-            this.btMedianFilter.UseVisualStyleBackColor = true;
-            this.btMedianFilter.Click += new System.EventHandler(this.btMedianFilter_Click);
+            this.btMarkovFilter.Location = new System.Drawing.Point(84, 90);
+            this.btMarkovFilter.Name = "btMarkovFilter";
+            this.btMarkovFilter.Size = new System.Drawing.Size(75, 23);
+            this.btMarkovFilter.TabIndex = 13;
+            this.btMarkovFilter.Text = "Markov filter";
+            this.btMarkovFilter.UseVisualStyleBackColor = true;
+            this.btMarkovFilter.Click += new System.EventHandler(this.btMarkovFilter_Click);
             // 
             // MainForm
             // 
@@ -291,6 +303,7 @@ namespace ComputerVision
         private System.Windows.Forms.Button btLowPassFilter;
         private System.Windows.Forms.TextBox tbWeight;
         private System.Windows.Forms.Button btMedianFilter;
+        private System.Windows.Forms.Button btMarkovFilter;
     }
 }
 
