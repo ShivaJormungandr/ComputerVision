@@ -38,6 +38,8 @@ namespace ComputerVision
             this.btReflexion = new System.Windows.Forms.Button();
             this.btMarkovFilter = new System.Windows.Forms.Button();
             this.btMedianFilter = new System.Windows.Forms.Button();
+            this.btUnsharpMask = new System.Windows.Forms.Button();
+            this.btHighPassFilter = new System.Windows.Forms.Button();
             this.btLowPassFilter = new System.Windows.Forms.Button();
             this.btHistoEqGs = new System.Windows.Forms.Button();
             this.btNegative = new System.Windows.Forms.Button();
@@ -48,8 +50,9 @@ namespace ComputerVision
             this.lbBrightness = new System.Windows.Forms.Label();
             this.lbContrast = new System.Windows.Forms.Label();
             this.tbContrast = new System.Windows.Forms.TrackBar();
-            this.btHighPassFilter = new System.Windows.Forms.Button();
-            this.btUnsharpMask = new System.Windows.Forms.Button();
+            this.btKirsch = new System.Windows.Forms.Button();
+            this.btPrewitt = new System.Windows.Forms.Button();
+            this.btFreiChen = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).BeginInit();
@@ -94,6 +97,9 @@ namespace ComputerVision
             this.panel1.Controls.Add(this.btReflexion);
             this.panel1.Controls.Add(this.btMarkovFilter);
             this.panel1.Controls.Add(this.btMedianFilter);
+            this.panel1.Controls.Add(this.btFreiChen);
+            this.panel1.Controls.Add(this.btPrewitt);
+            this.panel1.Controls.Add(this.btKirsch);
             this.panel1.Controls.Add(this.btUnsharpMask);
             this.panel1.Controls.Add(this.btHighPassFilter);
             this.panel1.Controls.Add(this.btLowPassFilter);
@@ -167,6 +173,26 @@ namespace ComputerVision
             this.btMedianFilter.Text = "Median filter";
             this.btMedianFilter.UseVisualStyleBackColor = true;
             this.btMedianFilter.Click += new System.EventHandler(this.btMedianFilter_Click);
+            // 
+            // btUnsharpMask
+            // 
+            this.btUnsharpMask.Location = new System.Drawing.Point(211, 90);
+            this.btUnsharpMask.Name = "btUnsharpMask";
+            this.btUnsharpMask.Size = new System.Drawing.Size(104, 23);
+            this.btUnsharpMask.TabIndex = 13;
+            this.btUnsharpMask.Text = "Unsharp Masking";
+            this.btUnsharpMask.UseVisualStyleBackColor = true;
+            this.btUnsharpMask.Click += new System.EventHandler(this.btUnsharpMask_Click);
+            // 
+            // btHighPassFilter
+            // 
+            this.btHighPassFilter.Location = new System.Drawing.Point(211, 61);
+            this.btHighPassFilter.Name = "btHighPassFilter";
+            this.btHighPassFilter.Size = new System.Drawing.Size(104, 23);
+            this.btHighPassFilter.TabIndex = 13;
+            this.btHighPassFilter.Text = "High Pass filter";
+            this.btHighPassFilter.UseVisualStyleBackColor = true;
+            this.btHighPassFilter.Click += new System.EventHandler(this.btHighPassFilter_Click);
             // 
             // btLowPassFilter
             // 
@@ -262,25 +288,35 @@ namespace ComputerVision
             this.tbContrast.TickFrequency = 10;
             this.tbContrast.ValueChanged += new System.EventHandler(this.tbContrast_ValueChanged);
             // 
-            // btHighPassFilter
+            // btKirsch
             // 
-            this.btHighPassFilter.Location = new System.Drawing.Point(211, 61);
-            this.btHighPassFilter.Name = "btHighPassFilter";
-            this.btHighPassFilter.Size = new System.Drawing.Size(104, 23);
-            this.btHighPassFilter.TabIndex = 13;
-            this.btHighPassFilter.Text = "High Pass filter";
-            this.btHighPassFilter.UseVisualStyleBackColor = true;
-            this.btHighPassFilter.Click += new System.EventHandler(this.btHighPassFilter_Click);
+            this.btKirsch.Location = new System.Drawing.Point(84, 162);
+            this.btKirsch.Name = "btKirsch";
+            this.btKirsch.Size = new System.Drawing.Size(75, 23);
+            this.btKirsch.TabIndex = 13;
+            this.btKirsch.Text = "Kirsch";
+            this.btKirsch.UseVisualStyleBackColor = true;
+            this.btKirsch.Click += new System.EventHandler(this.btKirsch_Click);
             // 
-            // btUnsharpMask
+            // btPrewitt
             // 
-            this.btUnsharpMask.Location = new System.Drawing.Point(211, 90);
-            this.btUnsharpMask.Name = "btUnsharpMask";
-            this.btUnsharpMask.Size = new System.Drawing.Size(104, 23);
-            this.btUnsharpMask.TabIndex = 13;
-            this.btUnsharpMask.Text = "Unsharp Masking";
-            this.btUnsharpMask.UseVisualStyleBackColor = true;
-            this.btUnsharpMask.Click += new System.EventHandler(this.btUnsharpMask_Click);
+            this.btPrewitt.Location = new System.Drawing.Point(159, 162);
+            this.btPrewitt.Name = "btPrewitt";
+            this.btPrewitt.Size = new System.Drawing.Size(75, 23);
+            this.btPrewitt.TabIndex = 13;
+            this.btPrewitt.Text = "Prewitt";
+            this.btPrewitt.UseVisualStyleBackColor = true;
+            this.btPrewitt.Click += new System.EventHandler(this.btPrewitt_Click);
+            // 
+            // btFreiChen
+            // 
+            this.btFreiChen.Location = new System.Drawing.Point(240, 162);
+            this.btFreiChen.Name = "btFreiChen";
+            this.btFreiChen.Size = new System.Drawing.Size(75, 23);
+            this.btFreiChen.TabIndex = 13;
+            this.btFreiChen.Text = "Frei-Chen";
+            this.btFreiChen.UseVisualStyleBackColor = true;
+            this.btFreiChen.Click += new System.EventHandler(this.btFreiChen_Click);
             // 
             // MainForm
             // 
@@ -330,6 +366,9 @@ namespace ComputerVision
         private System.Windows.Forms.Button btMarkovFilter;
         private System.Windows.Forms.Button btHighPassFilter;
         private System.Windows.Forms.Button btUnsharpMask;
+        private System.Windows.Forms.Button btKirsch;
+        private System.Windows.Forms.Button btPrewitt;
+        private System.Windows.Forms.Button btFreiChen;
     }
 }
 

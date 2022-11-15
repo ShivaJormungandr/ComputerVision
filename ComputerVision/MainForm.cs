@@ -27,6 +27,8 @@ namespace ComputerVision
 
         private void SafeExecute(Action action)
         {
+            if (workImage == null) return;
+
             workImage.Lock();
             action();
             workImage.Unlock();
@@ -34,6 +36,8 @@ namespace ComputerVision
 
         private void RefreshImage(Bitmap img)
         {
+            if (workImage == null) return;
+
             panelDestination.BackgroundImage = null;
             panelDestination.BackgroundImage = workImage.Image;
         }
@@ -496,9 +500,9 @@ namespace ComputerVision
                     sumG /= ((weight + 2) * (weight + 2));
                     sumB /= ((weight + 2) * (weight + 2));
 
-                    var gR = ((c/(2*c-1)) * color.R) - (((1-c)/(2*c-1)) * sumR);
-                    var gG = ((c/(2*c-1)) * color.G) - (((1-c)/(2*c-1)) * sumG);
-                    var gB = ((c/(2*c-1)) * color.B) - (((1-c)/(2*c-1)) * sumB);
+                    var gR = ((c / (2 * c - 1)) * color.R) - (((1 - c) / (2 * c - 1)) * sumR);
+                    var gG = ((c / (2 * c - 1)) * color.G) - (((1 - c) / (2 * c - 1)) * sumG);
+                    var gB = ((c / (2 * c - 1)) * color.B) - (((1 - c) / (2 * c - 1)) * sumB);
 
                     gR = gR > 255 ? 255 : gR;
                     gR = gR < 0 ? 0 : gR;
@@ -597,6 +601,245 @@ namespace ComputerVision
         {
             CBPF();
         }
+
+        private void ApplyKirsch()
+        {
+            workImage.Unlock();
+            Bitmap originalBit = workImage.Image.Clone(new Rectangle(0, 0, workImage.Width, workImage.Height), workImage.Image.PixelFormat);
+            FastImage original = new FastImage(originalBit);
+            workImage.Lock();
+            original.Lock();
+
+            double[,] h1 =
+            {
+                { -1, 0, 1 },
+                { -1, 0, 1 },
+                { -1, 0, 1 }
+            };
+            double[,] h2 =
+            {
+                { 1, 1, 1 },
+                { 0, 0, 0 },
+                { -1, -1, -1 }
+            };
+            double[,] h3 =
+            {
+                { 0, 1, 1 },
+                { -1, 0, 1 },
+                { -1, -1, 0 }
+            };
+            double[,] h4 =
+            {
+                { 1, 1, 0 },
+                { 1, 0, -1 },
+                { 0, -1, -1 }
+            };
+
+            for (int r = 1; r < workImage.Height - 1; r++)
+            {
+                for (int c = 1; c < workImage.Width - 1; c++)
+                {
+                    double[] sumR = { 0, 0, 0, 0 };
+                    double[] sumG = { 0, 0, 0, 0 };
+                    double[] sumB = { 0, 0, 0, 0 };
+
+
+                    for (int row = r - 1; row <= r + 1; row++)
+                    {
+                        for (int col = c - 1; col <= c + 1; col++)
+                        {
+                            var color = original.GetPixel(col, row);
+
+                            sumR[0] += color.R * h1[row - r + 1, col - c + 1];
+                            sumG[0] += color.G * h1[row - r + 1, col - c + 1];
+                            sumB[0] += color.B * h1[row - r + 1, col - c + 1];
+
+                            sumR[1] += color.R * h2[row - r + 1, col - c + 1];
+                            sumG[1] += color.G * h2[row - r + 1, col - c + 1];
+                            sumB[1] += color.B * h2[row - r + 1, col - c + 1];
+
+                            sumR[2] += color.R * h3[row - r + 1, col - c + 1];
+                            sumG[2] += color.G * h3[row - r + 1, col - c + 1];
+                            sumB[2] += color.B * h3[row - r + 1, col - c + 1];
+
+                            sumR[3] += color.R * h4[row - r + 1, col - c + 1];
+                            sumG[3] += color.G * h4[row - r + 1, col - c + 1];
+                            sumB[3] += color.B * h4[row - r + 1, col - c + 1];
+                        }
+                    }
+
+                    double sumRM = sumR.Max();
+                    double sumGM = sumR.Max();
+                    double sumBM = sumR.Max();
+
+
+                    sumRM = sumRM > 255 ? 255 : sumRM;
+                    sumRM = sumRM < 0 ? 0 : sumRM;
+                    sumGM = sumGM > 255 ? 255 : sumGM;
+                    sumGM = sumGM < 0 ? 0 : sumGM;
+                    sumBM = sumBM > 255 ? 255 : sumBM;
+                    sumBM = sumBM < 0 ? 0 : sumBM;
+
+                    var cl = Color.FromArgb((int)sumRM, (int)sumGM, (int)sumBM);
+                    workImage.SetPixel(c, r, cl);
+                }
+            }
+        }
+
+        private void ApplyPrewitt()
+        {
+            workImage.Unlock();
+            Bitmap originalBit = workImage.Image.Clone(new Rectangle(0, 0, workImage.Width, workImage.Height), workImage.Image.PixelFormat);
+            FastImage original = new FastImage(originalBit);
+            workImage.Lock();
+            original.Lock();
+
+            double[,] p =
+            {
+                { 1, 1, 1 },
+                { 0, 0, 0 },
+                { -1, -1, -1 }
+            };
+            double[,] q =
+            {
+                { -1, 0, 1 },
+                { -1, 0, 1 },
+                { -1, 0, 1 }
+            };
+
+
+            for (int r = 1; r < workImage.Height - 1; r++)
+            {
+                for (int c = 1; c < workImage.Width - 1; c++)
+                {
+                    double sumRp = 0;
+                    double sumGp = 0;
+                    double sumBp = 0;
+
+                    double sumRq = 0;
+                    double sumGq = 0;
+                    double sumBq = 0;
+
+
+                    for (int row = r - 1; row <= r + 1; row++)
+                    {
+                        for (int col = c - 1; col <= c + 1; col++)
+                        {
+                            var color = original.GetPixel(col, row);
+
+                            sumRp += color.R * p[row - r + 1, col - c + 1];
+                            sumGp += color.G * p[row - r + 1, col - c + 1];
+                            sumBp += color.B * p[row - r + 1, col - c + 1];
+
+                            sumRq += color.R * q[row - r + 1, col - c + 1];
+                            sumGq += color.G * q[row - r + 1, col - c + 1];
+                            sumBq += color.B * q[row - r + 1, col - c + 1];
+                        }
+                    }
+
+                    double RR = Math.Sqrt((Math.Pow(sumRp, 2) + Math.Pow(sumRq, 2)));
+                    double RG = Math.Sqrt((Math.Pow(sumGp, 2) + Math.Pow(sumGq, 2)));
+                    double RB = Math.Sqrt((Math.Pow(sumBp, 2) + Math.Pow(sumBq, 2)));
+
+
+                    RR = RR > 255 ? 255 : RR;
+                    RR = RR < 0 ? 0 : RR;
+                    RG = RG > 255 ? 255 : RG;
+                    RG = RG < 0 ? 0 : RG;
+                    RB = RB > 255 ? 255 : RB;
+                    RB = RB < 0 ? 0 : RB;
+
+                    var cl = Color.FromArgb((int)RR, (int)RG, (int)RB);
+                    workImage.SetPixel(c, r, cl);
+                }
+            }
+        }
+
+        private void ApplyFreiChen()
+        {
+            workImage.Unlock();
+            Bitmap originalBit = workImage.Image.Clone(new Rectangle(0, 0, workImage.Width, workImage.Height), workImage.Image.PixelFormat);
+            FastImage original = new FastImage(originalBit);
+            workImage.Lock();
+            original.Lock();
+
+            double[,,] f =
+            {
+                { { 1, Math.Sqrt(2), 1 },{ 0, 0, 0 },{ -1, -Math.Sqrt(2), -1 } },
+                { { 1, 0, -1 },{ Math.Sqrt(2), 0, -Math.Sqrt(2) },{ 1, 0, -1 } },
+                { { 0, -1, Math.Sqrt(2) },{ 1, 0, -1 },{ -Math.Sqrt(2), 1, 0 } },
+                { { Math.Sqrt(2), -1, 0 },{ -1, 0, 1 },{ 0, 1, -Math.Sqrt(2) } },
+                { { 0, 1, 0 },{ -1, 0, -1 },{ 0, 1, 0 } },
+                { { -1, 0, 1 },{ 0, 0, 0 },{ 1, 0, -1 } },
+                { { 1, -2, 1 },{ -2, 4, -2 },{ 1, -2, 1 } },
+                { { -2, 1, -2 },{ 1, 4, 1 },{ -2, 1, -2 } },
+                { { 1.0/9, 1.0/9, 1.0/9 },{ 1.0/9, 1.0/9, 1.0/9 },{ 1.0/9, 1.0/9, 1.0/9 } },
+            };
+
+
+
+            for (int r = 1; r < workImage.Height - 1; r++)
+            {
+                for (int c = 1; c < workImage.Width - 1; c++)
+                {
+                    double[] sumR = { 0, 0, 0, 0, 0, 0, 0, 0, 0, };
+                    double[] sumG = { 0, 0, 0, 0, 0, 0, 0, 0, 0, };
+                    double[] sumB = { 0, 0, 0, 0, 0, 0, 0, 0, 0, };
+
+                    for (int row = r - 1; row <= r + 1; row++)
+                    {
+                        for (int col = c - 1; col <= c + 1; col++)
+                        {
+                            var color = original.GetPixel(col, row);
+
+                            for (int i = 0; i < 9; i++)
+                            {
+                                sumR[i] += color.R * f[i, row - r + 1, col - c + 1];
+                                sumG[i] += color.G * f[i, row - r + 1, col - c + 1];
+                                sumB[i] += color.B * f[i, row - r + 1, col - c + 1];
+                            }
+
+                        }
+                    }
+
+                    double sumRs = 0;
+                    double sumGs = 0;
+                    double sumBs = 0;
+                    for (int i = 0; i < 4; i++)
+                    {
+                        sumRs += Math.Pow(sumR[i], 2);
+                        sumGs += Math.Pow(sumG[i], 2);
+                        sumBs += Math.Pow(sumB[i], 2);
+                    }
+
+                    double sumRj = 0;
+                    double sumGj = 0;
+                    double sumBj = 0;
+                    for (int i = 0; i < 9; i++)
+                    {
+                        sumRj += Math.Pow(sumR[i], 2);
+                        sumGj += Math.Pow(sumG[i], 2);
+                        sumBj += Math.Pow(sumB[i], 2);
+                    }
+
+                    double RR = sumRj == 0 ? 0 : Math.Sqrt((sumRs / sumRj)) * 255;
+                    double RG = sumGj == 0 ? 0 : Math.Sqrt((sumGs / sumGj)) * 255;
+                    double RB = sumBj == 0 ? 0 : Math.Sqrt((sumBs / sumBj)) * 255;
+
+
+                    RR = RR > 255 ? 255 : RR;
+                    RR = RR < 0 ? 0 : RR;
+                    RG = RG > 255 ? 255 : RG;
+                    RG = RG < 0 ? 0 : RG;
+                    RB = RB > 255 ? 255 : RB;
+                    RB = RB < 0 ? 0 : RB;
+
+                    var cl = Color.FromArgb((int)RR, (int)RG, (int)RB);
+                    workImage.SetPixel(c, r, cl);
+                }
+            }
+        }
+
         private void ResetImage()
         {
             var image = originalImage.Clone(new Rectangle(0, 0, originalImage.Width, originalImage.Height), originalImage.PixelFormat);
@@ -714,6 +957,27 @@ namespace ComputerVision
             if (workImage == null) return;
 
             SafeExecute(ApplayUnsharpMask);
+            RefreshImage(workImage?.Image);
+        }
+        private void btKirsch_Click(object sender, EventArgs e)
+        {
+            if (workImage == null) return;
+
+            SafeExecute(ApplyKirsch);
+            RefreshImage(workImage?.Image);
+        }
+        private void btPrewitt_Click(object sender, EventArgs e)
+        {
+            if (workImage == null) return;
+
+            SafeExecute(ApplyPrewitt);
+            RefreshImage(workImage?.Image);
+        }
+        private void btFreiChen_Click(object sender, EventArgs e)
+        {
+            if (workImage == null) return;
+
+            SafeExecute(ApplyFreiChen);
             RefreshImage(workImage?.Image);
         }
 
