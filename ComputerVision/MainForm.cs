@@ -357,7 +357,159 @@ namespace ComputerVision
                     var cl = Color.FromArgb((int)sumR, (int)sumG, (int)sumB);
                     workImage.SetPixel(c, r, cl);
                 }
+            }
+        }
 
+        private void ApplayHighPassFilter()
+        {
+            workImage.Unlock();
+            Bitmap originalBit = workImage.Image.Clone(new Rectangle(0, 0, workImage.Width, workImage.Height), workImage.Image.PixelFormat);
+            FastImage original = new FastImage(originalBit);
+            workImage.Lock();
+            original.Lock();
+
+            var choiseString = tbWeight.Text;
+            int choise;
+            var habemusNumar = int.TryParse(choiseString, out choise);
+            if (!habemusNumar) return;
+
+            double[,] h = new double[3, 3];
+
+            switch (choise)
+            {
+                case 1:
+                    h[0, 0] = 0;
+                    h[0, 1] = -1;
+                    h[0, 2] = 0;
+                    h[1, 0] = -1;
+                    h[1, 1] = 5;
+                    h[1, 2] = -1;
+                    h[2, 0] = 0;
+                    h[2, 1] = -1;
+                    h[2, 2] = 0;
+                    break;
+                case 2:
+                    h[0, 0] = -1;
+                    h[0, 1] = -1;
+                    h[0, 2] = -1;
+                    h[1, 0] = -1;
+                    h[1, 1] = 9;
+                    h[1, 2] = -1;
+                    h[2, 0] = -1;
+                    h[2, 1] = -1;
+                    h[2, 2] = -1;
+                    break;
+                case 3:
+                    h[0, 0] = 1;
+                    h[0, 1] = -2;
+                    h[0, 2] = 1;
+                    h[1, 0] = -2;
+                    h[1, 1] = 5;
+                    h[1, 2] = -2;
+                    h[2, 0] = 1;
+                    h[2, 1] = -2;
+                    h[2, 2] = 1;
+                    break;
+            }
+
+            for (int r = 1; r < workImage.Height - 1; r++)
+            {
+                for (int c = 1; c < workImage.Width - 1; c++)
+                {
+                    double sumR = 0;
+                    double sumG = 0;
+                    double sumB = 0;
+                    for (int row = r - 1; row <= r + 1; row++)
+                    {
+                        for (int col = c - 1; col <= c + 1; col++)
+                        {
+                            var color = original.GetPixel(col, row);
+
+                            sumR += color.R * h[row - r + 1, col - c + 1];
+                            sumG += color.G * h[row - r + 1, col - c + 1];
+                            sumB += color.B * h[row - r + 1, col - c + 1];
+                        }
+                    }
+                    sumR = sumR > 255 ? 255 : sumR;
+                    sumR = sumR < 0 ? 0 : sumR;
+                    sumG = sumG > 255 ? 255 : sumG;
+                    sumG = sumG < 0 ? 0 : sumG;
+                    sumB = sumB > 255 ? 255 : sumB;
+                    sumB = sumB < 0 ? 0 : sumB;
+
+                    var cl = Color.FromArgb((int)sumR, (int)sumG, (int)sumB);
+                    workImage.SetPixel(c, r, cl);
+                }
+            }
+        }
+
+        private void ApplayUnsharpMask()
+        {
+            workImage.Unlock();
+            Bitmap originalBit = workImage.Image.Clone(new Rectangle(0, 0, workImage.Width, workImage.Height), workImage.Image.PixelFormat);
+            FastImage original = new FastImage(originalBit);
+            workImage.Lock();
+            original.Lock();
+
+            var c = 0.6;
+
+            var weightString = tbWeight.Text;
+            int weight;
+            var habemusNumar = int.TryParse(weightString, out weight);
+            if (!habemusNumar) return;
+
+            double[,] h = new double[3, 3];
+
+            h[0, 0] = 1;
+            h[0, 1] = weight;
+            h[0, 2] = 1;
+            h[1, 0] = weight;
+            h[1, 1] = weight * weight;
+            h[1, 2] = weight;
+            h[2, 0] = 1;
+            h[2, 1] = weight;
+            h[2, 2] = 1;
+
+            for (int row = 1; row < workImage.Height - 1; row++)
+            {
+                for (int col = 1; col < workImage.Width - 1; col++)
+                {
+                    var color = original.GetPixel(col, row);
+
+                    double sumR = 0;
+                    double sumG = 0;
+                    double sumB = 0;
+
+                    for (int rowLPF = row - 1; rowLPF <= row + 1; rowLPF++)
+                    {
+                        for (int colLPF = col - 1; colLPF <= col + 1; colLPF++)
+                        {
+                            var colorLPF = workImage.GetPixel(colLPF, rowLPF);
+
+                            sumR += colorLPF.R * h[rowLPF - row + 1, colLPF - col + 1];
+                            sumG += colorLPF.G * h[rowLPF - row + 1, colLPF - col + 1];
+                            sumB += colorLPF.B * h[rowLPF - row + 1, colLPF - col + 1];
+                        }
+                    }
+
+                    sumR /= ((weight + 2) * (weight + 2));
+                    sumG /= ((weight + 2) * (weight + 2));
+                    sumB /= ((weight + 2) * (weight + 2));
+
+                    var gR = ((c/(2*c-1)) * color.R) - (((1-c)/(2*c-1)) * sumR);
+                    var gG = ((c/(2*c-1)) * color.G) - (((1-c)/(2*c-1)) * sumG);
+                    var gB = ((c/(2*c-1)) * color.B) - (((1-c)/(2*c-1)) * sumB);
+
+                    gR = gR > 255 ? 255 : gR;
+                    gR = gR < 0 ? 0 : gR;
+                    gG = gG > 255 ? 255 : gG;
+                    gG = gG < 0 ? 0 : gG;
+                    gB = gB > 255 ? 255 : gB;
+                    gB = gB < 0 ? 0 : gB;
+
+                    var cl = Color.FromArgb((int)gR, (int)gG, (int)gB);
+                    workImage.SetPixel(col, row, cl);
+                }
             }
         }
 
@@ -392,7 +544,7 @@ namespace ComputerVision
                 }
             }
 
-            if(Q.Count == 0)
+            if (Q.Count == 0)
             {
                 var t = workImage.GetPixel(x, y);
                 Q.Add(Color.Black, 1);
@@ -429,9 +581,9 @@ namespace ComputerVision
 
         private void CBPF(int CS = 3, int SR = 4, int T = 500)
         {
-            for(int col = 0; col < workImage.Width; col++)
+            for (int col = 0; col < workImage.Width; col++)
             {
-                for(int row = 0; row < workImage.Height; row++)
+                for (int row = 0; row < workImage.Height; row++)
                 {
                     if (Salt_Pepper(col, row))
                     {
@@ -550,8 +702,22 @@ namespace ComputerVision
             SafeExecute(ApplyMarkovFilter);
             RefreshImage(workImage?.Image);
         }
-        #endregion
+        private void btHighPassFilter_Click(object sender, EventArgs e)
+        {
+            if (workImage == null) return;
 
+            SafeExecute(ApplayHighPassFilter);
+            RefreshImage(workImage?.Image);
+        }
+        private void btUnsharpMask_Click(object sender, EventArgs e)
+        {
+            if (workImage == null) return;
+
+            SafeExecute(ApplayUnsharpMask);
+            RefreshImage(workImage?.Image);
+        }
+
+        #endregion
 
     }
 }

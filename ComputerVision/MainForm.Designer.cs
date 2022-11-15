@@ -36,6 +36,7 @@ namespace ComputerVision
             this.cbReflexion = new System.Windows.Forms.ComboBox();
             this.cbGrayscale = new System.Windows.Forms.ComboBox();
             this.btReflexion = new System.Windows.Forms.Button();
+            this.btMarkovFilter = new System.Windows.Forms.Button();
             this.btMedianFilter = new System.Windows.Forms.Button();
             this.btLowPassFilter = new System.Windows.Forms.Button();
             this.btHistoEqGs = new System.Windows.Forms.Button();
@@ -47,7 +48,8 @@ namespace ComputerVision
             this.lbBrightness = new System.Windows.Forms.Label();
             this.lbContrast = new System.Windows.Forms.Label();
             this.tbContrast = new System.Windows.Forms.TrackBar();
-            this.btMarkovFilter = new System.Windows.Forms.Button();
+            this.btHighPassFilter = new System.Windows.Forms.Button();
+            this.btUnsharpMask = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).BeginInit();
@@ -92,6 +94,8 @@ namespace ComputerVision
             this.panel1.Controls.Add(this.btReflexion);
             this.panel1.Controls.Add(this.btMarkovFilter);
             this.panel1.Controls.Add(this.btMedianFilter);
+            this.panel1.Controls.Add(this.btUnsharpMask);
+            this.panel1.Controls.Add(this.btHighPassFilter);
             this.panel1.Controls.Add(this.btLowPassFilter);
             this.panel1.Controls.Add(this.btHistoEqGs);
             this.panel1.Controls.Add(this.btNegative);
@@ -143,6 +147,16 @@ namespace ComputerVision
             this.btReflexion.Text = "Reflexion";
             this.btReflexion.UseVisualStyleBackColor = true;
             this.btReflexion.Click += new System.EventHandler(this.btReflexion_Click);
+            // 
+            // btMarkovFilter
+            // 
+            this.btMarkovFilter.Location = new System.Drawing.Point(84, 90);
+            this.btMarkovFilter.Name = "btMarkovFilter";
+            this.btMarkovFilter.Size = new System.Drawing.Size(75, 23);
+            this.btMarkovFilter.TabIndex = 13;
+            this.btMarkovFilter.Text = "Markov filter";
+            this.btMarkovFilter.UseVisualStyleBackColor = true;
+            this.btMarkovFilter.Click += new System.EventHandler(this.btMarkovFilter_Click);
             // 
             // btMedianFilter
             // 
@@ -248,15 +262,25 @@ namespace ComputerVision
             this.tbContrast.TickFrequency = 10;
             this.tbContrast.ValueChanged += new System.EventHandler(this.tbContrast_ValueChanged);
             // 
-            // btMarkovFilter
+            // btHighPassFilter
             // 
-            this.btMarkovFilter.Location = new System.Drawing.Point(84, 90);
-            this.btMarkovFilter.Name = "btMarkovFilter";
-            this.btMarkovFilter.Size = new System.Drawing.Size(75, 23);
-            this.btMarkovFilter.TabIndex = 13;
-            this.btMarkovFilter.Text = "Markov filter";
-            this.btMarkovFilter.UseVisualStyleBackColor = true;
-            this.btMarkovFilter.Click += new System.EventHandler(this.btMarkovFilter_Click);
+            this.btHighPassFilter.Location = new System.Drawing.Point(211, 61);
+            this.btHighPassFilter.Name = "btHighPassFilter";
+            this.btHighPassFilter.Size = new System.Drawing.Size(104, 23);
+            this.btHighPassFilter.TabIndex = 13;
+            this.btHighPassFilter.Text = "High Pass filter";
+            this.btHighPassFilter.UseVisualStyleBackColor = true;
+            this.btHighPassFilter.Click += new System.EventHandler(this.btHighPassFilter_Click);
+            // 
+            // btUnsharpMask
+            // 
+            this.btUnsharpMask.Location = new System.Drawing.Point(211, 90);
+            this.btUnsharpMask.Name = "btUnsharpMask";
+            this.btUnsharpMask.Size = new System.Drawing.Size(104, 23);
+            this.btUnsharpMask.TabIndex = 13;
+            this.btUnsharpMask.Text = "Unsharp Masking";
+            this.btUnsharpMask.UseVisualStyleBackColor = true;
+            this.btUnsharpMask.Click += new System.EventHandler(this.btUnsharpMask_Click);
             // 
             // MainForm
             // 
@@ -304,6 +328,8 @@ namespace ComputerVision
         private System.Windows.Forms.TextBox tbWeight;
         private System.Windows.Forms.Button btMedianFilter;
         private System.Windows.Forms.Button btMarkovFilter;
+        private System.Windows.Forms.Button btHighPassFilter;
+        private System.Windows.Forms.Button btUnsharpMask;
     }
 }
 
