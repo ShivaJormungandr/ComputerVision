@@ -68,5 +68,26 @@ namespace ComputerVision
                 pPixel->blue = c.B;
             }
         }
+
+        public void DrawCross(Point cornerTopLeft, Point cornerBottomRight, Color c)
+        {
+            int middle;
+
+            int temp = (cornerBottomRight.Y - cornerTopLeft.Y) / 2;
+            middle = temp + cornerTopLeft.Y;
+
+            for (int i = cornerTopLeft.X; i < cornerBottomRight.X; i++)
+            {
+                SetPixel(i, middle, c);
+            }
+
+            temp = (cornerBottomRight.X - cornerTopLeft.X) / 2;
+            middle = temp + cornerTopLeft.X;
+
+            for (int i = cornerTopLeft.Y; i < cornerBottomRight.Y; i++)
+            {
+                SetPixel(middle, i, c);
+            }
+        }
     }
 }

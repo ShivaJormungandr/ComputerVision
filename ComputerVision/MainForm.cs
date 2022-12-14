@@ -8,6 +8,8 @@ using System.Windows.Forms;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ComputerVision
 {
@@ -23,6 +25,7 @@ namespace ComputerVision
             cbGrayscale.SelectedIndex = 0;
             cbReflexion.SelectedIndex = 0;
             tbWeight.Text = "3";
+            tbTreshold.Text = "250";
         }
 
         private void SafeExecute(Action action)
@@ -39,7 +42,7 @@ namespace ComputerVision
             if (workImage == null) return;
 
             panelDestination.BackgroundImage = null;
-            panelDestination.BackgroundImage = workImage.Image;
+            panelDestination.BackgroundImage = img;
         }
 
         private void ApplyGrayscale()
@@ -840,6 +843,216 @@ namespace ComputerVision
             }
         }
 
+        private void ApplyGabor()
+        {
+            workImage.Unlock();
+            Bitmap originalBit = workImage.Image.Clone(new Rectangle(0, 0, workImage.Width, workImage.Height), workImage.Image.PixelFormat);
+            FastImage original = new FastImage(originalBit);
+            workImage.Lock();
+            original.Lock();
+
+            double[,] p =
+            {
+                {1, 1, 1 },
+                {0, 0, 0 },
+                {-1, -1, -1 }
+            };
+            double[,] q =
+{
+                {-1, 0, 1 },
+                {-1, 0, 1 },
+                {-1, 0, 1 }
+            };
+
+            double alpha = 0.66;
+            double omega = 1.5;
+
+
+            double u = 0;
+
+            for (int r = 1; r < workImage.Height - 1; r++)
+            {
+                for (int c = 1; c < workImage.Width - 1; c++)
+                {
+                    double sumP = 0;
+                    double sumQ = 0;
+
+                    for (int row = r - 1; row <= r + 1; row++)
+                    {
+                        for (int col = c - 1; col <= c + 1; col++)
+                        {
+                            var color = original.GetPixel(col, row);
+
+                            double colGray = (color.R + color.G + color.B) / 3.0;
+                            sumP += colGray * p[row - r + 1, col - c + 1];
+                            sumQ += colGray * q[row - r + 1, col - c + 1];
+                        }
+                    }
+
+                    if (sumQ == 0)
+                    {
+                        if (sumP >= 0)
+                        {
+                            u = Math.PI / 2;
+                        }
+                        else if (sumP < 0)
+                        {
+                            u = -(Math.PI / 2);
+                        }
+                    }
+                    else
+                    {
+                        u = Math.Atan(sumP / sumQ);
+
+                        if (sumQ < 0)
+                        {
+                            u += Math.PI;
+                        }
+                    }
+
+                    u += Math.PI / 2;
+
+                    double sumR = 0;
+                    double sumG = 0;
+                    double sumB = 0;
+
+                    for (int row = r - 1; row <= r + 1; row++)
+                    {
+                        for (int col = c - 1; col <= c + 1; col++)
+                        {
+                            var pozR = row - r + 1;
+                            var pozC = col - c + 1;
+
+                            double scale = Math.Pow(Math.E, (0 - (Math.Pow(pozR, 2) + Math.Pow(pozC, 2)) / (2 * Math.Pow(alpha, 2)))) * Math.Sin(omega * (pozR * Math.Cos(u) + pozC * Math.Sin(u)));
+
+                            var color = original.GetPixel(col, row);
+
+                            sumR += scale * color.R;
+                            sumG += scale * color.G;
+                            sumB += scale * color.B;
+                        }
+                    }
+
+                    sumR = sumR > 255 ? 255 : sumR;
+                    sumR = sumR < 0 ? 0 : sumR;
+                    sumG = sumG > 255 ? 255 : sumG;
+                    sumG = sumG < 0 ? 0 : sumG;
+                    sumB = sumB > 255 ? 255 : sumB;
+                    sumB = sumB < 0 ? 0 : sumB;
+
+                    var cl = Color.FromArgb((int)sumR, (int)sumG, (int)sumB);
+                    workImage.SetPixel(c, r, cl);
+                }
+            }
+        }
+
+        private void ImageSplitter()
+        {
+            workImage.Unlock();
+            Bitmap originalBit = workImage.Image.Clone(new Rectangle(0, 0, workImage.Width, workImage.Height), workImage.Image.PixelFormat);
+            FastImage originalImage = new FastImage(originalBit);
+            workImage.Lock();
+
+            originalImage.Lock();
+
+            Point cornerTopLeft = new Point(0, 0);
+            Point cornerBottomRight = new Point(workImage.Width, workImage.Height);
+
+            SplitInQuarters(originalImage, cornerTopLeft, cornerBottomRight);
+
+            originalImage.Unlock();
+        }
+
+        void SplitInQuarters(FastImage originalImage, Point cornerTopLeft, Point cornerBottomRight)
+        {
+            int treshold = int.MaxValue;
+            try
+            {
+                treshold = int.Parse(tbTreshold.Text);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return;
+            }
+
+            double sigma = CalcSigma(originalImage, cornerTopLeft, cornerBottomRight);
+            if ((sigma > treshold) && (cornerTopLeft.X != cornerBottomRight.X) && (cornerTopLeft.Y != cornerBottomRight.Y))
+            {
+                workImage.DrawCross(cornerTopLeft, cornerBottomRight, Color.Magenta);
+
+                // 1
+                Point cornerTopLeftTemp = cornerTopLeft;
+                Point cornerBottomRightTemp = new Point(((cornerBottomRight.X - cornerTopLeft.X) / 2) + cornerTopLeft.X, ((cornerBottomRight.Y - cornerTopLeft.Y) / 2) + cornerTopLeft.Y);
+
+                SplitInQuarters(originalImage, cornerTopLeftTemp, cornerBottomRightTemp);
+
+                // 2
+                Point cornerTopLeftTemp1 = new Point(((cornerBottomRight.X - cornerTopLeft.X) / 2) + cornerTopLeft.X, cornerTopLeft.Y);
+                Point cornerBottomRightTemp1 = new Point(cornerBottomRight.X, ((cornerBottomRight.Y - cornerTopLeft.Y) / 2) + cornerTopLeft.Y);
+
+                SplitInQuarters(originalImage, cornerTopLeftTemp1, cornerBottomRightTemp1);
+
+                // 3
+                Point cornerTopLeftTemp2 = new Point(cornerTopLeft.X, ((cornerBottomRight.Y - cornerTopLeft.Y) / 2) + cornerTopLeft.Y);
+                Point cornerBottomRightTemp2 = new Point(((cornerBottomRight.X - cornerTopLeft.X) / 2) + cornerTopLeft.X, cornerBottomRight.Y);
+
+                SplitInQuarters(originalImage, cornerTopLeftTemp2, cornerBottomRightTemp2);
+
+                // 4
+                Point cornerTopLeftTemp3 = new Point(((cornerBottomRight.X - cornerTopLeft.X) / 2) + cornerTopLeft.X, ((cornerBottomRight.Y - cornerTopLeft.Y) / 2) + cornerTopLeft.Y);
+                Point cornerBottomRightTemp3 = cornerBottomRight;
+
+                SplitInQuarters(originalImage, cornerTopLeftTemp3, cornerBottomRightTemp3);
+            }
+
+        }
+
+        private double CalcSigma(FastImage originalImage, Point cornerTopLeft, Point cornerBottomRight)
+        {
+            Color color;
+            double sigma;
+            double sum = 0;
+
+            double avgGreyScale = CalcGreyScaleAvg(originalImage, cornerTopLeft, cornerBottomRight);
+
+            for (int i = cornerTopLeft.X; i < cornerBottomRight.X; i++)
+            {
+                for (int j = cornerTopLeft.Y; j < cornerBottomRight.Y; j++)
+                {
+                    color = originalImage.GetPixel(i, j);
+                    double avg = (color.R + color.G + color.B) / 3;
+                    sum += Math.Pow(avg - avgGreyScale, 2);
+                }
+            }
+
+            int pixelCount = (cornerBottomRight.X - cornerTopLeft.X) * (cornerBottomRight.Y - cornerTopLeft.Y);
+            sigma = sum / pixelCount ;
+
+            return sigma;
+        }
+
+        private double CalcGreyScaleAvg(FastImage originalImage, Point cornerTopLeft, Point cornerBottomRight)
+        {
+            Color color;
+            double avg = 0;
+
+            for (int i = cornerTopLeft.X; i < cornerBottomRight.X; i++)
+            {
+                for (int j = cornerTopLeft.Y; j < cornerBottomRight.Y; j++)
+                {
+                    color = originalImage.GetPixel(i, j);
+                    double grayScale = (color.R + color.G + color.B) / 3;
+                    avg += grayScale;
+                }
+            }
+
+            int pixelCount = (cornerBottomRight.X - cornerTopLeft.X) * (cornerBottomRight.Y - cornerTopLeft.Y);
+            avg = avg / pixelCount;
+            
+            return avg;
+        }
+
         private void ResetImage()
         {
             var image = originalImage.Clone(new Rectangle(0, 0, originalImage.Width, originalImage.Height), originalImage.PixelFormat);
@@ -938,6 +1151,7 @@ namespace ComputerVision
             SafeExecute(ApplyMedianFilter);
             RefreshImage(workImage?.Image);
         }
+
         private void btMarkovFilter_Click(object sender, EventArgs e)
         {
             if (workImage == null) return;
@@ -945,6 +1159,7 @@ namespace ComputerVision
             SafeExecute(ApplyMarkovFilter);
             RefreshImage(workImage?.Image);
         }
+
         private void btHighPassFilter_Click(object sender, EventArgs e)
         {
             if (workImage == null) return;
@@ -952,6 +1167,7 @@ namespace ComputerVision
             SafeExecute(ApplayHighPassFilter);
             RefreshImage(workImage?.Image);
         }
+
         private void btUnsharpMask_Click(object sender, EventArgs e)
         {
             if (workImage == null) return;
@@ -959,6 +1175,7 @@ namespace ComputerVision
             SafeExecute(ApplayUnsharpMask);
             RefreshImage(workImage?.Image);
         }
+
         private void btKirsch_Click(object sender, EventArgs e)
         {
             if (workImage == null) return;
@@ -966,6 +1183,7 @@ namespace ComputerVision
             SafeExecute(ApplyKirsch);
             RefreshImage(workImage?.Image);
         }
+
         private void btPrewitt_Click(object sender, EventArgs e)
         {
             if (workImage == null) return;
@@ -973,6 +1191,7 @@ namespace ComputerVision
             SafeExecute(ApplyPrewitt);
             RefreshImage(workImage?.Image);
         }
+
         private void btFreiChen_Click(object sender, EventArgs e)
         {
             if (workImage == null) return;
@@ -981,7 +1200,40 @@ namespace ComputerVision
             RefreshImage(workImage?.Image);
         }
 
+        private void btGabor_Click(object sender, EventArgs e)
+        {
+            if (workImage == null) return;
+
+            SafeExecute(ApplyGabor);
+            RefreshImage(workImage?.Image);
+        }
+
+        private void btSplitImage_Click(object sender, EventArgs e)
+        {
+            if (workImage == null) return;
+
+            SafeExecute(ImageSplitter);
+            RefreshImage(workImage?.Image);
+        }
+
+        private void btSplitMerge_Click(object sender, EventArgs e)
+        {
+
+        }
+
         #endregion
+        private void panelSource_MouseClick(object sender, MouseEventArgs e)
+        {
+            var panel = (Panel)sender;
+            var imgWidth = workImage.Width;
+            var imgHeight = workImage.Height;
+            var panelWidth = panel.Width;
+            var panelHeight = panel.Height;
+
+            var queue = new Queue<Point>();
+            var intensity = 0.0;
+
+        }
 
     }
 }

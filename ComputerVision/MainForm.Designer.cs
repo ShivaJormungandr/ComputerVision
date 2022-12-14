@@ -32,12 +32,18 @@ namespace ComputerVision
             this.panelDestination = new System.Windows.Forms.Panel();
             this.buttonLoad = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.tbTreshold = new System.Windows.Forms.TextBox();
             this.tbWeight = new System.Windows.Forms.TextBox();
             this.cbReflexion = new System.Windows.Forms.ComboBox();
             this.cbGrayscale = new System.Windows.Forms.ComboBox();
             this.btReflexion = new System.Windows.Forms.Button();
             this.btMarkovFilter = new System.Windows.Forms.Button();
             this.btMedianFilter = new System.Windows.Forms.Button();
+            this.btSplitImage = new System.Windows.Forms.Button();
+            this.btGabor = new System.Windows.Forms.Button();
+            this.btFreiChen = new System.Windows.Forms.Button();
+            this.btPrewitt = new System.Windows.Forms.Button();
+            this.btKirsch = new System.Windows.Forms.Button();
             this.btUnsharpMask = new System.Windows.Forms.Button();
             this.btHighPassFilter = new System.Windows.Forms.Button();
             this.btLowPassFilter = new System.Windows.Forms.Button();
@@ -50,9 +56,7 @@ namespace ComputerVision
             this.lbBrightness = new System.Windows.Forms.Label();
             this.lbContrast = new System.Windows.Forms.Label();
             this.tbContrast = new System.Windows.Forms.TrackBar();
-            this.btKirsch = new System.Windows.Forms.Button();
-            this.btPrewitt = new System.Windows.Forms.Button();
-            this.btFreiChen = new System.Windows.Forms.Button();
+            this.btSplitMerge = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).BeginInit();
@@ -67,6 +71,7 @@ namespace ComputerVision
             this.panelSource.Name = "panelSource";
             this.panelSource.Size = new System.Drawing.Size(320, 240);
             this.panelSource.TabIndex = 0;
+            this.panelSource.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panelSource_MouseClick);
             // 
             // panelDestination
             // 
@@ -91,12 +96,16 @@ namespace ComputerVision
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.btSplitMerge);
+            this.panel1.Controls.Add(this.tbTreshold);
             this.panel1.Controls.Add(this.tbWeight);
             this.panel1.Controls.Add(this.cbReflexion);
             this.panel1.Controls.Add(this.cbGrayscale);
             this.panel1.Controls.Add(this.btReflexion);
             this.panel1.Controls.Add(this.btMarkovFilter);
             this.panel1.Controls.Add(this.btMedianFilter);
+            this.panel1.Controls.Add(this.btSplitImage);
+            this.panel1.Controls.Add(this.btGabor);
             this.panel1.Controls.Add(this.btFreiChen);
             this.panel1.Controls.Add(this.btPrewitt);
             this.panel1.Controls.Add(this.btKirsch);
@@ -107,10 +116,17 @@ namespace ComputerVision
             this.panel1.Controls.Add(this.btNegative);
             this.panel1.Controls.Add(this.btReset);
             this.panel1.Controls.Add(this.btGrayscale);
-            this.panel1.Location = new System.Drawing.Point(348, 271);
+            this.panel1.Location = new System.Drawing.Point(674, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(320, 190);
+            this.panel1.Size = new System.Drawing.Size(320, 450);
             this.panel1.TabIndex = 3;
+            // 
+            // tbTreshold
+            // 
+            this.tbTreshold.Location = new System.Drawing.Point(84, 251);
+            this.tbTreshold.Name = "tbTreshold";
+            this.tbTreshold.Size = new System.Drawing.Size(113, 20);
+            this.tbTreshold.TabIndex = 15;
             // 
             // tbWeight
             // 
@@ -173,6 +189,56 @@ namespace ComputerVision
             this.btMedianFilter.Text = "Median filter";
             this.btMedianFilter.UseVisualStyleBackColor = true;
             this.btMedianFilter.Click += new System.EventHandler(this.btMedianFilter_Click);
+            // 
+            // btSplitImage
+            // 
+            this.btSplitImage.Location = new System.Drawing.Point(3, 249);
+            this.btSplitImage.Name = "btSplitImage";
+            this.btSplitImage.Size = new System.Drawing.Size(75, 23);
+            this.btSplitImage.TabIndex = 13;
+            this.btSplitImage.Text = "SplitImage";
+            this.btSplitImage.UseVisualStyleBackColor = true;
+            this.btSplitImage.Click += new System.EventHandler(this.btSplitImage_Click);
+            // 
+            // btGabor
+            // 
+            this.btGabor.Location = new System.Drawing.Point(3, 220);
+            this.btGabor.Name = "btGabor";
+            this.btGabor.Size = new System.Drawing.Size(75, 23);
+            this.btGabor.TabIndex = 13;
+            this.btGabor.Text = "Gabor";
+            this.btGabor.UseVisualStyleBackColor = true;
+            this.btGabor.Click += new System.EventHandler(this.btGabor_Click);
+            // 
+            // btFreiChen
+            // 
+            this.btFreiChen.Location = new System.Drawing.Point(165, 191);
+            this.btFreiChen.Name = "btFreiChen";
+            this.btFreiChen.Size = new System.Drawing.Size(75, 23);
+            this.btFreiChen.TabIndex = 13;
+            this.btFreiChen.Text = "Frei-Chen";
+            this.btFreiChen.UseVisualStyleBackColor = true;
+            this.btFreiChen.Click += new System.EventHandler(this.btFreiChen_Click);
+            // 
+            // btPrewitt
+            // 
+            this.btPrewitt.Location = new System.Drawing.Point(84, 191);
+            this.btPrewitt.Name = "btPrewitt";
+            this.btPrewitt.Size = new System.Drawing.Size(75, 23);
+            this.btPrewitt.TabIndex = 13;
+            this.btPrewitt.Text = "Prewitt";
+            this.btPrewitt.UseVisualStyleBackColor = true;
+            this.btPrewitt.Click += new System.EventHandler(this.btPrewitt_Click);
+            // 
+            // btKirsch
+            // 
+            this.btKirsch.Location = new System.Drawing.Point(3, 191);
+            this.btKirsch.Name = "btKirsch";
+            this.btKirsch.Size = new System.Drawing.Size(75, 23);
+            this.btKirsch.TabIndex = 13;
+            this.btKirsch.Text = "Kirsch";
+            this.btKirsch.UseVisualStyleBackColor = true;
+            this.btKirsch.Click += new System.EventHandler(this.btKirsch_Click);
             // 
             // btUnsharpMask
             // 
@@ -288,41 +354,21 @@ namespace ComputerVision
             this.tbContrast.TickFrequency = 10;
             this.tbContrast.ValueChanged += new System.EventHandler(this.tbContrast_ValueChanged);
             // 
-            // btKirsch
+            // btSplitMerge
             // 
-            this.btKirsch.Location = new System.Drawing.Point(84, 162);
-            this.btKirsch.Name = "btKirsch";
-            this.btKirsch.Size = new System.Drawing.Size(75, 23);
-            this.btKirsch.TabIndex = 13;
-            this.btKirsch.Text = "Kirsch";
-            this.btKirsch.UseVisualStyleBackColor = true;
-            this.btKirsch.Click += new System.EventHandler(this.btKirsch_Click);
-            // 
-            // btPrewitt
-            // 
-            this.btPrewitt.Location = new System.Drawing.Point(159, 162);
-            this.btPrewitt.Name = "btPrewitt";
-            this.btPrewitt.Size = new System.Drawing.Size(75, 23);
-            this.btPrewitt.TabIndex = 13;
-            this.btPrewitt.Text = "Prewitt";
-            this.btPrewitt.UseVisualStyleBackColor = true;
-            this.btPrewitt.Click += new System.EventHandler(this.btPrewitt_Click);
-            // 
-            // btFreiChen
-            // 
-            this.btFreiChen.Location = new System.Drawing.Point(240, 162);
-            this.btFreiChen.Name = "btFreiChen";
-            this.btFreiChen.Size = new System.Drawing.Size(75, 23);
-            this.btFreiChen.TabIndex = 13;
-            this.btFreiChen.Text = "Frei-Chen";
-            this.btFreiChen.UseVisualStyleBackColor = true;
-            this.btFreiChen.Click += new System.EventHandler(this.btFreiChen_Click);
+            this.btSplitMerge.Location = new System.Drawing.Point(203, 249);
+            this.btSplitMerge.Name = "btSplitMerge";
+            this.btSplitMerge.Size = new System.Drawing.Size(79, 23);
+            this.btSplitMerge.TabIndex = 16;
+            this.btSplitMerge.Text = "Split n Merge";
+            this.btSplitMerge.UseVisualStyleBackColor = true;
+            this.btSplitMerge.Click += new System.EventHandler(this.btSplitMerge_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(680, 473);
+            this.ClientSize = new System.Drawing.Size(1006, 473);
             this.Controls.Add(this.tbContrast);
             this.Controls.Add(this.tbBrightness);
             this.Controls.Add(this.lbContrast);
@@ -369,6 +415,10 @@ namespace ComputerVision
         private System.Windows.Forms.Button btKirsch;
         private System.Windows.Forms.Button btPrewitt;
         private System.Windows.Forms.Button btFreiChen;
+        private System.Windows.Forms.Button btGabor;
+        private System.Windows.Forms.Button btSplitImage;
+        private System.Windows.Forms.TextBox tbTreshold;
+        private System.Windows.Forms.Button btSplitMerge;
     }
 }
 
